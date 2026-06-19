@@ -1,1 +1,160 @@
+/* =====================================================================
+   css/style.css
+   モバイル表示を前提としたレイアウト。ゲーム内のステータス／ログ／
+   メニュー／ゲームオーバーはすべてCanvas内部に描画されるため、
+   ここではCanvasの配置とバーチャルパッド／ユーティリティボタンの
+   見た目のみを定義する。
+   ===================================================================== */
 
+* {
+    box-sizing: border-box;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+html, body {
+    background-color: #0a0a0a;
+    color: #fff;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+#screen-area {
+    width: 100%;
+    max-width: 480px;
+    padding: 8px 8px 0 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#canvas-container {
+    width: 100%;
+    max-width: 396px;
+    background-color: #000;
+    border: 2px solid #444;
+    border-radius: 4px;
+    overflow: hidden;
+    line-height: 0;
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+#control-area {
+    width: 100%;
+    max-width: 480px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 14px 10px;
+    background-color: #161616;
+    border-top: 2px solid #2c2c2c;
+}
+
+.pad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
+    width: 240px;
+    height: 240px;
+    margin-bottom: 16px;
+    transition: filter 0.15s ease;
+}
+
+.pad-btn {
+    background: #2e2e2e;
+    border: 2px solid #555;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.pad-btn:active {
+    background: #555;
+    border-color: #fff;
+}
+
+.pad-btn.center-btn {
+    background: #3a2222;
+    font-size: 11px;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.pad-btn.center-btn:active {
+    background: #5a3333;
+}
+
+/* 投げる方向選択中：パッド全体を黄色強調 */
+.pad-grid.aim-mode .pad-btn {
+    border-color: #ffcc00;
+    background: #443300;
+}
+
+/* ポップアップメニュー操作中：パッド全体を青強調（上下＝選択／中央＝決定） */
+.pad-grid.menu-mode .pad-btn {
+    border-color: #5599ff;
+    background: #1a2a44;
+}
+
+.utility-area {
+    display: flex;
+    width: 100%;
+    max-width: 280px;
+    justify-content: space-around;
+    gap: 8px;
+}
+
+.util-btn {
+    flex: 1;
+    padding: 12px 4px;
+    background: #223344;
+    border: 2px solid #335577;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+}
+
+.util-btn:active {
+    background: #2c4466;
+}
+
+.util-btn.active {
+    background: #cc7700;
+    border-color: #ffaa00;
+    animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+    from { opacity: 0.8; }
+    to { opacity: 1; }
+}
