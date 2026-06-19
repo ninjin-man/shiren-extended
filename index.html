@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>不思議のダンジョン風 モバイルRPG（ES Modules版）</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="screen-area">
+    <div id="canvas-container">
+        <canvas id="gameCanvas"></canvas>
+    </div>
+</div>
+
+<div id="control-area">
+    <div class="pad-grid" id="pad-grid">
+        <div class="pad-btn" data-dx="-1" data-dy="-1">↖</div>
+        <div class="pad-btn" data-dx="0" data-dy="-1">↑</div>
+        <div class="pad-btn" data-dx="1" data-dy="-1">↗</div>
+
+        <div class="pad-btn" data-dx="-1" data-dy="0">←</div>
+        <div class="pad-btn center-btn" data-dx="0" data-dy="0">決定/足踏</div>
+        <div class="pad-btn" data-dx="1" data-dy="0">→</div>
+
+        <div class="pad-btn" data-dx="-1" data-dy="1">↙</div>
+        <div class="pad-btn" data-dx="0" data-dy="1">↓</div>
+        <div class="pad-btn" data-dx="1" data-dy="1">↘</div>
+    </div>
+
+    <div class="utility-area">
+        <div class="util-btn" id="menu-btn">メニュー</div>
+        <div class="util-btn" id="turn-mode-btn">方向転換</div>
+        <div class="util-btn" id="minimap-btn">全体図</div>
+    </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
