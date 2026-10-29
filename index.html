@@ -53,41 +53,76 @@ function draw(){
  const n=+document.getElementById('size').value;canvas.width=n;canvas.height=n;
  const p=palettes[document.getElementById('paletteSelect').value],kind=document.getElementById('kind').value,detail=+document.getElementById('detail').value;
  ctx.clearRect(0,0,n,n);ctx.imageSmoothingEnabled=false;
- const s=n/32;ctx.save();ctx.scale(s,s);
+ const scale=n/32;ctx.save();ctx.scale(scale,scale);
  if(!transparent)rect(0,0,32,32,p.bg);
  const O=p.outline;
+ const eye=(x,y)=>{rect(x,y,3,3,p.white);pixel(x+1,y+1,p.black)};
+ const line=(x1,y1,x2,y2,c)=>{let dx=Math.abs(x2-x1),dy=Math.abs(y2-y1),sx=x1<x2?1:-1,sy=y1<y2?1:-1,err=dx-dy;while(true){pixel(x1,y1,c);if(x1===x2&&y1===y2)break;const e=2*err;if(e>-dy){err-=dy;x1+=sx}if(e<dx){err+=dx;y1+=sy}}};
  if(kind==='slime'){
-  // Explicit symmetric chunky silhouette; eyes stay high-contrast and readable.
-  const rows=[[14,4],[10,4],[7,3],[5,3],[4,3],[3,4],[2,5],[1,7],[1,9],[2,11],[4,13],[6,15]];
-  rows.forEach(([x,w],i)=>{let y=8+i;rect(x,y,w,1,O);rect(32-x-w,y,w,1,O);});
-  for(let y=9;y<19;y++){let left=Math.max(2,Math.floor(2+Math.abs(y-13)*.32));rect(left,y,32-left*2,1,p.main)}
-  rect(5,10,22,3,p.main);rect(7,9,18,2,p.light);rect(4,14,24,4,p.main);rect(6,18,20,2,p.shadow);
-  rect(7,13,3,3,p.white);pixel(8,14,p.black);rect(22,13,3,3,p.white);pixel(23,14,p.black);
-  if(detail>1){rect(4,16,3,1,p.light);rect(25,16,3,1,p.light);pixel(12,18,p.shadow);pixel(19,18,p.shadow)}
-  if(detail>2){pixel(10,11,p.light);pixel(12,10,p.light);pixel(20,11,p.light);pixel(17,19,O)}
+  const rows=[[14,4],[11,10],[8,16],[6,20],[4,24],[3,26],[2,28],[2,28],[2,28],[3,26],[4,24],[5,22],[7,18],[9,14],[11,10],[13,6]];
+  rows.forEach(([x,w],i)=>{const y=6+i;rect(x-1,y,w+2,1,O);rect(x,y, w,1,y<10?p.light:(y>18?p.shadow:p.main));});
+  rect(6,11,5,2,p.light);rect(21,11,4,2,p.light);
+  eye(8,13);eye(21,13);
+  if(detail>1){rect(6,18,4,1,p.light);rect(23,18,3,1,p.light);rect(13,21,6,1,p.shadow)}
+  if(detail>2){pixel(12,10,p.light);pixel(19,10,p.light);pixel(10,19,p.shadow);pixel(21,19,p.shadow)}
  }else if(kind==='bat'){
-  rect(12,10,8,12,O);rect(9,12,14,8,p.shadow);rect(5,8,7,4,O);rect(2,6,6,5,O);rect(2,11,10,7,p.main);rect(20,8,7,4,O);rect(24,6,6,5,O);rect(20,11,10,7,p.main);rect(11,10,10,12,O);rect(12,11,8,10,p.shadow);rect(13,13,6,5,p.main);pixel(14,14,p.white);pixel(18,14,p.white);pixel(14,14,p.red);pixel(18,14,p.red);rect(13,20,2,4,O);rect(18,20,2,4,O);
+  // Wing membrane with stepped silhouette, separate body and ears.
+  rect(13,10,6,13,O);rect(11,12,10,9,p.shadow);
+  rect(8,8,5,3,O);rect(4,7,5,4,O);rect(2,10,10,3,O);rect(3,13,9,5,O);
+  rect(19,8,5,3,O);rect(23,7,5,4,O);rect(20,10,10,3,O);rect(20,13,9,5,O);
+  rect(4,11,7,5,p.main);rect(21,11,7,5,p.main);
+  rect(12,11,8,11,O);rect(13,12,6,9,p.brown);rect(13,9,2,4,O);rect(17,9,2,4,O);
+  pixel(14,14,p.red);pixel(18,14,p.red);pixel(14,13,p.white);pixel(18,13,p.white);
+  rect(12,21,3,4,O);rect(17,21,3,4,O);pixel(13,25,p.metalLight);pixel(18,25,p.metalLight);
+  if(detail>1){line(4,14,10,17,p.shadow);line(21,17,27,14,p.shadow)}
  }else if(kind==='goblin'){
-  rect(9,7,14,3,O);rect(6,10,20,12,O);rect(8,9,16,12,p.main);rect(5,11,4,5,O);rect(23,11,4,5,O);rect(10,13,4,4,p.white);pixel(12,14,p.black);rect(18,13,4,4,p.white);pixel(20,14,p.black);rect(13,18,6,2,O);rect(11,22,4,5,O);rect(18,22,4,5,O);rect(8,27,7,2,O);rect(17,27,7,2,O);rect(10,7,12,3,p.light);if(detail>1){rect(7,18,3,2,p.shadow);rect(22,18,3,2,p.shadow)}
+  // Head, pointed ears, tunic and feet share a consistent dark outline.
+  rect(10,5,3,5,O);rect(19,5,3,5,O);rect(11,6,2,3,p.main);rect(19,6,2,3,p.main);
+  rect(8,9,16,12,O);rect(10,8,12,12,p.main);rect(12,8,8,2,p.light);
+  rect(5,11,5,5,O);rect(22,11,5,5,O);rect(6,12,3,3,p.main);rect(23,12,3,3,p.main);
+  rect(11,12,4,4,p.white);pixel(13,13,p.black);rect(17,12,4,4,p.white);pixel(19,13,p.black);
+  rect(14,16,4,2,O);rect(12,18,8,2,p.brown);pixel(13,18,p.gold);pixel(18,18,p.gold);
+  rect(10,21,5,6,O);rect(17,21,5,6,O);rect(8,26,8,3,O);rect(16,26,8,3,O);
+  rect(11,22,3,3,p.brown);rect(18,22,3,3,p.brown);
+  if(detail>1){rect(9,10,2,2,p.light);rect(21,10,2,2,p.light);rect(13,20,6,1,p.gold)}
  }else if(kind==='sword'){
-  // Diagonal blade, crossguard and wrapped grip
-  for(let i=0;i<17;i++){pixel(24-i,4+i,O);pixel(25-i,4+i,O);pixel(24-i,3+i,p.metalLight);pixel(23-i,4+i,p.metal)}
-  rect(7,19,14,3,O);rect(9,20,10,1,p.gold);rect(13,21,5,7,O);rect(14,22,3,5,p.brown);for(let y=22;y<27;y+=2)rect(14,y,3,1,p.gold);rect(12,27,7,3,O);rect(13,28,5,1,p.metal);
+  // Stepped diagonal blade; guard, grip and pommel are clearly separated.
+  line(7,23,23,7,O);line(8,22,23,7,p.metal);line(9,21,22,8,p.metalLight);line(10,20,21,9,p.metalLight);
+  pixel(24,6,p.metalLight);pixel(23,6,O);pixel(24,7,O);
+  line(7,20,14,27,O);line(8,20,14,26,p.gold);line(9,20,14,25,p.gold);
+  line(8,24,12,20,O);line(9,24,13,20,p.metalLight);
+  line(12,25,16,29,O);line(13,25,16,28,p.brown);line(14,26,16,28,p.gold);
+  rect(14,28,5,2,O);rect(15,28,3,1,p.metal);
+  if(detail>1){pixel(18,13,p.white);pixel(14,17,p.white)}
  }else if(kind==='shield'){
-  rect(7,4,18,3,O);rect(5,7,22,14,O);rect(7,21,18,4,O);rect(10,25,12,3,O);rect(12,28,8,2,O);rect(7,8,18,12,p.brown);rect(9,8,14,12,p.gold);rect(11,9,10,10,p.metal);rect(14,10,4,8,p.metalLight);rect(14,14,4,4,p.gold);if(detail>1){rect(7,9,2,10,O);rect(23,9,2,10,O)}
+  rect(7,4,18,3,O);rect(5,7,22,13,O);rect(7,20,18,4,O);rect(10,24,12,3,O);rect(13,27,6,2,O);
+  rect(8,7,16,13,p.brown);rect(10,8,12,12,p.gold);rect(12,9,8,10,p.metal);rect(14,10,4,8,p.metalLight);
+  rect(14,13,4,5,p.gold);rect(15,14,2,3,p.red);
+  rect(7,9,2,9,O);rect(23,9,2,9,O);
+  if(detail>1){pixel(9,8,p.metalLight);pixel(22,8,p.metalLight);pixel(11,21,p.gold);pixel(20,21,p.gold)}
  }else if(kind==='potion'){
-  rect(12,3,8,3,O);rect(13,4,6,2,p.gold);rect(11,6,10,3,O);rect(8,9,16,15,O);rect(7,12,18,8,O);rect(9,10,14,12,p.red);rect(11,11,10,2,p.light);rect(9,18,14,3,p.shadow);rect(12,24,8,2,O);rect(13,26,6,2,O);rect(14,28,4,1,O);if(detail>1)rect(10,13,2,4,p.white);
+  rect(12,3,8,3,O);rect(13,4,6,1,p.gold);rect(11,6,10,3,O);rect(9,9,14,3,O);rect(7,12,18,9,O);rect(9,21,14,3,O);rect(12,24,8,2,O);rect(13,26,6,2,O);rect(14,28,4,1,O);
+  rect(10,10,12,11,p.red);rect(8,13,16,6,p.red);rect(11,10,10,3,p.light);rect(9,18,14,3,p.shadow);rect(12,12,2,5,p.white);
+  if(detail>1){pixel(18,12,p.light);rect(13,5,6,1,p.metalLight)}
  }else if(kind==='herb'){
-  rect(15,8,3,20,O);rect(14,11,2,13,p.shadow);rect(8,7,8,6,O);rect(5,5,10,6,O);rect(7,6,7,4,p.main);rect(17,12,8,6,O);rect(19,13,7,4,O);rect(10,17,7,5,O);rect(7,17,6,4,O);rect(16,20,8,5,O);rect(17,21,6,3,p.main);rect(10,18,5,3,p.light);rect(12,27,9,2,O);if(detail>1){pixel(9,7,p.light);pixel(21,14,p.light)}
+  // Stem and layered leaves, with strong outline blocks.
+  line(16,10,16,27,O);line(16,12,16,26,p.brown);
+  rect(7,5,8,6,O);rect(4,7,9,5,O);rect(7,6,7,4,p.main);rect(5,8,6,2,p.light);
+  rect(17,10,8,6,O);rect(20,8,7,5,O);rect(19,11,6,3,p.main);rect(21,9,4,2,p.light);
+  rect(8,16,8,5,O);rect(6,18,8,4,O);rect(8,17,6,3,p.main);rect(7,18,4,2,p.light);
+  rect(17,19,8,6,O);rect(19,17,7,5,O);rect(18,20,6,3,p.main);rect(20,18,4,2,p.light);
+  rect(12,27,8,2,O);
+  if(detail>1){pixel(13,14,p.light);pixel(18,14,p.light);pixel(15,23,p.light)}
  }else if(kind==='rock'){
-  rect(9,5,13,3,O);rect(5,8,21,5,O);rect(3,13,26,10,O);rect(6,23,20,4,O);rect(10,27,12,2,O);rect(8,9,15,3,p.metal);rect(5,13,22,8,p.bg);rect(7,14,14,5,p.metal);rect(9,22,14,3,p.shadow);if(detail>1){pixel(18,12,p.metalLight);pixel(11,15,p.metalLight);pixel(22,19,O)}
- }
- // Controlled seed-based small accents for variation without blur.
- if(detail===3 && kind!=='sword' && kind!=='shield' && kind!=='potion'){
-  for(let i=0;i<5;i++){let x=4+Math.floor(rng()*24),y=5+Math.floor(rng()*20);if(rng()>.5)pixel(x,y,p.light)}
+  const rockRows=[[11,10],[7,18],[5,22],[3,26],[3,26],[2,28],[3,26],[4,24],[5,22],[7,18],[9,14],[11,10]];
+  rockRows.forEach(([x,w],i)=>{const y=7+i;rect(x-1,y,w+2,1,O);rect(x,y,w,1,i<3?p.metal:i>8?p.shadow:p.bg)});
+  rect(8,9,9,3,p.metal);rect(6,13,8,5,p.metal);rect(17,12,8,4,p.shadow);rect(11,19,11,3,p.shadow);
+  if(detail>1){rect(9,10,3,1,p.metalLight);pixel(8,15,p.metalLight);pixel(21,14,O);pixel(14,20,O)}
+  if(detail>2){pixel(18,17,p.metalLight);pixel(12,22,p.metal)}
  }
  if(grid){ctx.strokeStyle='#ffffff35';ctx.lineWidth=.035;for(let i=0;i<=32;i++){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,32);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(32,i);ctx.stroke()}}
- ctx.restore();document.getElementById('status').textContent=kindLabel(kind)+' / '+n+'×'+n+' / '+document.getElementById('paletteSelect').selectedOptions[0].text;
+ ctx.restore();
+ document.getElementById('status').textContent=kindLabel(kind)+' / '+n+'×'+n+' / '+document.getElementById('paletteSelect').selectedOptions[0].text;
  document.getElementById('palette').innerHTML=Object.values(p).slice(0,6).map(c=>'<span class="swatch" style="background:'+c+'"></span>').join('');
 }
 function kindLabel(k){return ({slime:'スライム',bat:'コウモリ',goblin:'小鬼',sword:'剣',shield:'盾',potion:'薬瓶',herb:'草',rock:'岩'})[k]}
