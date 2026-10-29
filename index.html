@@ -86,14 +86,13 @@ function draw(){
   rect(11,22,3,3,p.brown);rect(18,22,3,3,p.brown);
   if(detail>1){rect(9,10,2,2,p.light);rect(21,10,2,2,p.light);rect(13,20,6,1,p.gold)}
  }else if(kind==='sword'){
-  // Stepped diagonal blade; guard, grip and pommel are clearly separated.
-  line(7,23,23,7,O);line(8,22,23,7,p.metal);line(9,21,22,8,p.metalLight);line(10,20,21,9,p.metalLight);
-  pixel(24,6,p.metalLight);pixel(23,6,O);pixel(24,7,O);
-  line(7,20,14,27,O);line(8,20,14,26,p.gold);line(9,20,14,25,p.gold);
-  line(8,24,12,20,O);line(9,24,13,20,p.metalLight);
-  line(12,25,16,29,O);line(13,25,16,28,p.brown);line(14,26,16,28,p.gold);
-  rect(14,28,5,2,O);rect(15,28,3,1,p.metal);
-  if(detail>1){pixel(18,13,p.white);pixel(14,17,p.white)}
+  // Readable upright short sword: pointed blade, broad crossguard, wrapped grip, pommel.
+  rect(14,3,4,1,O);rect(13,4,6,2,O);rect(13,6,6,9,O);rect(12,15,8,2,O);
+  rect(15,4,2,10,p.metalLight);rect(14,6,1,8,p.metal);rect(17,6,1,8,p.metal);
+  rect(8,16,16,3,O);rect(10,17,12,1,p.gold);rect(12,18,8,2,O);
+  rect(13,19,6,7,O);rect(14,20,4,5,p.brown);rect(14,21,4,1,p.gold);rect(14,24,4,1,p.gold);
+  rect(11,25,10,4,O);rect(13,26,6,2,p.gold);rect(14,26,4,1,p.metalLight);
+  if(detail>2){pixel(15,8,p.white);pixel(16,11,p.white);pixel(12,17,p.metalLight);pixel(19,17,p.metalLight)}
  }else if(kind==='shield'){
   rect(7,4,18,3,O);rect(5,7,22,13,O);rect(7,20,18,4,O);rect(10,24,12,3,O);rect(13,27,6,2,O);
   rect(8,7,16,13,p.brown);rect(10,8,12,12,p.gold);rect(12,9,8,10,p.metal);rect(14,10,4,8,p.metalLight);
