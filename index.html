@@ -94,9 +94,14 @@ document.getElementById('download').onclick=()=>{
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   if(isIOS){
    const url=canvas.toDataURL('image/png');
-   const tab=window.open(url,'_blank');
-   if(tab){document.getElementById('status').textContent='PNGを別タブで開きました。画像を長押しして「写真に保存」または「ファイルに保存」を選んでください。';}
-   else{document.getElementById('status').textContent='ポップアップがブロックされました。Safariのポップアップ設定を確認してください。';}
+   const tab=window.open('','_blank');
+   if(tab){
+    tab.document.open();
+    tab.document.write('<!doctype html><html lang="ja"><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>PNG保存</title><style>body{margin:0;padding:16px;background:#20242b;color:#fff;font-family:system-ui;text-align:center}img{display:block;image-rendering:pixelated;image-rendering:crisp-edges;width:min(90vw,512px);height:auto;margin:24px auto;background-color:#fff;background-image:linear-gradient(45deg,#ddd 25%,transparent 25%),linear-gradient(-45deg,#ddd 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ddd 75%),linear-gradient(-45deg,transparent 75%,#ddd 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0}p{font-size:14px;line-height:1.6}</style></head><body><p>画像を長押しして「写真に保存」または「ファイルに保存」を選んでください。</p><img id="png" alt="生成したPNG"><p>'+name+'</p></body></html>');
+    tab.document.close();
+    tab.document.getElementById('png').src=url;
+    document.getElementById('status').textContent='保存用の画像ページを開きました。画像を長押しして保存してください。';
+   }else{document.getElementById('status').textContent='ポップアップがブロックされました。Safariのポップアップ設定を確認してください。';}
    return;
   }
   canvas.toBlob(blob=>{
