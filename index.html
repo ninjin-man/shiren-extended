@@ -20,7 +20,12 @@
 <p class="hint">表示を拡大してもドットの輪郭を維持します。生成物はこのブラウザ内で作成し、サーバーには送信しません。</p>
 </section>
 <section class="panel">
-<h2 class="section-title">素材設定</h2>
+<h2 class="section-title">一括生成プレビュー</h2>
+<p class="hint">登録済みの8種類を同じ設定でまとめて並べ、ゲーム用素材セットとして確認します。</p>
+<div class="preview" style="min-height:0;padding:10px;margin-top:10px"><canvas id="sheet" width="128" height="128" style="width:100%;max-width:420px;height:auto;image-rendering:pixelated"></canvas></div>
+<div class="actions"><button class="primary full" id="batchGenerate">8種類を一括生成</button></div>
+<div class="status" id="batchStatus">一括プレビューはまだ生成されていません</div>
+<h2 class="section-title" style="margin-top:20px">素材設定</h2>
 <div class="controls">
 <div><label for="kind">素材タイプ</label><select id="kind"><option value="slime">モンスター：スライム</option><option value="bat">モンスター：コウモリ</option><option value="goblin">モンスター：小鬼</option><option value="sword">武器：剣</option><option value="shield">防具：盾</option><option value="potion">アイテム：薬瓶</option><option value="herb">アイテム：草</option><option value="rock">ダンジョン：岩</option></select></div>
 <div><label for="size">キャンバスサイズ</label><select id="size"><option>16</option><option selected>32</option><option>48</option><option>64</option></select></div>
@@ -86,6 +91,19 @@ function draw(){
  document.getElementById('palette').innerHTML=Object.values(p).slice(0,6).map(c=>'<span class="swatch" style="background:'+c+'"></span>').join('');
 }
 function kindLabel(k){return ({slime:'スライム',bat:'コウモリ',goblin:'小鬼',sword:'剣',shield:'盾',potion:'薬瓶',herb:'草',rock:'岩'})[k]}
+const batchKinds=['slime','bat','goblin','sword','shield','potion','herb','rock'];
+document.getElementById('batchGenerate').onclick=()=>{
+ const select=document.getElementById('kind'),original=select.value;
+ const sheet=document.getElementById('sheet'),sc=sheet.getContext('2d');
+ const n=+document.getElementById('size').value,cell=Math.max(32,n);
+ sheet.width=cell*4;sheet.height=cell*2;sc.clearRect(0,0,sheet.width,sheet.height);sc.imageSmoothingEnabled=false;
+ batchKinds.forEach((kind,i)=>{
+  select.value=kind;draw();
+  sc.drawImage(canvas,(i%4)*cell,Math.floor(i/4)*cell,cell,cell);
+ });
+ select.value=original;draw();
+ document.getElementById('batchStatus').textContent='8種類を生成しました。並び順：スライム、コウモリ、小鬼、剣、盾、薬瓶、草、岩。設定を変えて再生成できます。';
+};
 document.getElementById('generate').onclick=()=>{seed++;draw()};
 document.getElementById('download').onclick=()=>{
  const name=document.getElementById('kind').value+'_'+canvas.width+'.png';
