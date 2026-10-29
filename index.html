@@ -87,7 +87,27 @@ function draw(){
 }
 function kindLabel(k){return ({slime:'スライム',bat:'コウモリ',goblin:'小鬼',sword:'剣',shield:'盾',potion:'薬瓶',herb:'草',rock:'岩'})[k]}
 document.getElementById('generate').onclick=()=>{seed++;draw()};
-document.getElementById('download').onclick=()=>{const a=document.createElement('a');a.download= document.getElementById('kind').value+'_'+canvas.width+'.png';a.href=canvas.toDataURL('image/png');a.click()};
+document.getElementById('download').onclick=()=>{
+ const name=document.getElementById('kind').value+'_'+canvas.width+'.png';
+ try{
+  // iOS Safari often ignores the download attribute. Open the generated PNG directly there.
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(isIOS){
+   const url=canvas.toDataURL('image/png');
+   const tab=window.open(url,'_blank');
+   if(tab){document.getElementById('status').textContent='PNGを別タブで開きました。画像を長押しして「写真に保存」または「ファイルに保存」を選んでください。';}
+   else{document.getElementById('status').textContent='ポップアップがブロックされました。Safariのポップアップ設定を確認してください。';}
+   return;
+  }
+  canvas.toBlob(blob=>{
+   if(!blob){document.getElementById('status').textContent='PNGの生成に失敗しました。もう一度お試しください。';return;}
+   const url=URL.createObjectURL(blob),a=document.createElement('a');
+   a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),1500);
+   document.getElementById('status').textContent='PNGを書き出しました：'+name;
+  },'image/png');
+ }catch(err){document.getElementById('status').textContent='書き出しエラー：'+err.message;}
+};
 document.getElementById('transparent').onclick=e=>{transparent=!transparent;e.target.textContent='背景：'+(transparent?'透明':'表示');draw()};
 document.getElementById('gridToggle').onclick=e=>{grid=!grid;e.target.textContent='グリッド：'+(grid?'ON':'OFF');draw()};
 ['kind','size','paletteSelect','detail'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{document.getElementById('detailValue').textContent=['少','中','多'][+document.getElementById('detail').value-1];draw()}));
