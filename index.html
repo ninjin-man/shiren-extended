@@ -1,41 +1,97 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>不思議のダンジョン風 モバイルRPG（ES Modules版）</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Pixel Forge — ドット絵工房</title>
+<style>
+:root{color-scheme:dark;--bg:#11151b;--panel:#1c232c;--line:#34404d;--text:#edf2f7;--muted:#9eacbb;--accent:#f0b44b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif}header{padding:18px 16px 12px;border-bottom:1px solid var(--line)}h1{font-size:21px;margin:0 0 5px}header p{margin:0;color:var(--muted);font-size:12px}.wrap{max-width:900px;margin:auto;padding:14px;display:grid;gap:14px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}.preview{display:grid;place-items:center;min-height:260px;background-color:#0d1117;background-image:linear-gradient(45deg,#171e27 25%,transparent 25%),linear-gradient(-45deg,#171e27 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#171e27 75%),linear-gradient(-45deg,transparent 75%,#171e27 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0;border-radius:10px;overflow:hidden}canvas{width:min(100%,320px);height:auto;image-rendering:pixelated;image-rendering:crisp-edges;max-height:50vh;object-fit:contain}.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}select,input[type=range]{width:100%}select{background:#111820;color:var(--text);border:1px solid var(--line);padding:11px;border-radius:9px;font-size:15px}button{border:0;border-radius:10px;padding:12px 10px;font-weight:700;font-size:14px;cursor:pointer;background:#303b48;color:var(--text)}button.primary{background:var(--accent);color:#211707}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.full{grid-column:1/-1}.hint{font-size:12px;color:var(--muted);line-height:1.6;margin:12px 0 0}.palette{display:flex;gap:6px;margin-top:10px}.swatch{height:22px;flex:1;border-radius:4px;border:1px solid #ffffff30}.status{font-size:12px;color:var(--muted);margin-top:8px;min-height:18px}.section-title{font-size:14px;font-weight:700;margin:0 0 12px}.tiny{font-size:11px;color:var(--muted)}@media(min-width:700px){.wrap{grid-template-columns:1fr 1fr;align-items:start}.preview-panel{position:sticky;top:12px}.preview{min-height:400px}}
+</style>
 </head>
 <body>
-
-<div id="screen-area">
-    <div id="canvas-container">
-        <canvas id="gameCanvas"></canvas>
-    </div>
+<header><h1>Pixel Forge <span style="color:var(--accent)">/</span> ドット絵工房</h1><p>ゲーム用ピクセル素材を生成・確認・PNG出力。輪郭くっきり、アンチエイリアスなし。</p></header>
+<main class="wrap">
+<section class="panel preview-panel">
+<div class="preview"><canvas id="art" width="32" height="32" aria-label="生成したドット絵"></canvas></div>
+<div class="palette" id="palette"></div>
+<div class="actions"><button class="primary" id="generate">別パターンを生成</button><button id="download">PNGを書き出す</button></div>
+<div class="status" id="status" aria-live="polite">準備完了</div>
+<p class="hint">表示を拡大してもドットの輪郭を維持します。生成物はこのブラウザ内で作成し、サーバーには送信しません。</p>
+</section>
+<section class="panel">
+<h2 class="section-title">素材設定</h2>
+<div class="controls">
+<div><label for="kind">素材タイプ</label><select id="kind"><option value="slime">モンスター：スライム</option><option value="bat">モンスター：コウモリ</option><option value="goblin">モンスター：小鬼</option><option value="sword">武器：剣</option><option value="shield">防具：盾</option><option value="potion">アイテム：薬瓶</option><option value="herb">アイテム：草</option><option value="rock">ダンジョン：岩</option></select></div>
+<div><label for="size">キャンバスサイズ</label><select id="size"><option>16</option><option selected>32</option><option>48</option><option>64</option></select></div>
+<div class="full"><label for="paletteSelect">配色</label><select id="paletteSelect"><option value="classic">SFC風クラシック</option><option value="forest">森林</option><option value="fire">炎・赤系</option><option value="ice">氷・青系</option><option value="night">暗色ダンジョン</option></select></div>
+<div class="full"><label for="detail">ディテール量：<span id="detailValue">中</span></label><input id="detail" type="range" min="1" max="3" value="2"></div>
 </div>
-
-<div id="control-area">
-    <div class="pad-grid" id="pad-grid">
-        <div class="pad-btn" data-dx="-1" data-dy="-1">↖</div>
-        <div class="pad-btn" data-dx="0" data-dy="-1">↑</div>
-        <div class="pad-btn" data-dx="1" data-dy="-1">↗</div>
-
-        <div class="pad-btn" data-dx="-1" data-dy="0">←</div>
-        <div class="pad-btn center-btn" data-dx="0" data-dy="0">決定/足踏</div>
-        <div class="pad-btn" data-dx="1" data-dy="0">→</div>
-
-        <div class="pad-btn" data-dx="-1" data-dy="1">↙</div>
-        <div class="pad-btn" data-dx="0" data-dy="1">↓</div>
-        <div class="pad-btn" data-dx="1" data-dy="1">↘</div>
-    </div>
-
-    <div class="utility-area">
-        <div class="util-btn" id="menu-btn">メニュー</div>
-        <div class="util-btn" id="turn-mode-btn">方向転換</div>
-        <div class="util-btn" id="minimap-btn">全体図</div>
-    </div>
-</div>
-
-<script type="module" src="js/main.js"></script>
+<div class="actions"><button id="transparent">背景：透明</button><button id="gridToggle">グリッド：OFF</button></div>
+<p class="hint">まずは形状テンプレートを使ったプロシージャル生成版です。各素材を同じピクセル密度で揃えるための土台として、テンプレートと配色を増やしていきます。</p>
+</section>
+</main>
+<script>
+const canvas=document.getElementById('art'),ctx=canvas.getContext('2d',{alpha:true});
+const palettes={
+ classic:{outline:'#202632',shadow:'#28664f',main:'#45b879',light:'#8be0a0',white:'#fff0c9',black:'#171b24',metal:'#aebdca',metalLight:'#edf4f2',red:'#c84c50',brown:'#87583c',gold:'#e6b84d',bg:'#3e4a50'},
+ forest:{outline:'#182d28',shadow:'#2e6341',main:'#5a9b52',light:'#b4d77a',white:'#fff1d2',black:'#17251f',metal:'#b7c4a5',metalLight:'#eff2cf',red:'#b85a45',brown:'#72513a',gold:'#d9b65a',bg:'#304a3b'},
+ fire:{outline:'#321c28',shadow:'#923d32',main:'#dc6744',light:'#ffbd68',white:'#fff0ca',black:'#241824',metal:'#aab0b8',metalLight:'#f2dfbf',red:'#f04e48',brown:'#784638',gold:'#ffe078',bg:'#61352e'},
+ ice:{outline:'#1a2c43',shadow:'#3c6892',main:'#5ba6c9',light:'#b2eaff',white:'#ffffff',black:'#162338',metal:'#93bad9',metalLight:'#e6f8ff',red:'#d36c7e',brown:'#66566b',gold:'#f3d57a',bg:'#304e70'},
+ night:{outline:'#171624',shadow:'#41406e',main:'#716cb0',light:'#b8b2ee',white:'#f3edff',black:'#12121d',metal:'#878ba8',metalLight:'#d8d9ef',red:'#a34f70',brown:'#544052',gold:'#c7ad72',bg:'#29283d'}
+};
+let seed=9,transparent=false,grid=false;
+function rng(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
+function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
+function pixel(x,y,c){rect(x,y,1,1,c)}
+function draw(){
+ const n=+document.getElementById('size').value;canvas.width=n;canvas.height=n;
+ const p=palettes[document.getElementById('paletteSelect').value],kind=document.getElementById('kind').value,detail=+document.getElementById('detail').value;
+ ctx.clearRect(0,0,n,n);ctx.imageSmoothingEnabled=false;
+ const s=n/32;ctx.save();ctx.scale(s,s);
+ if(!transparent)rect(0,0,32,32,p.bg);
+ const O=p.outline;
+ if(kind==='slime'){
+  // Explicit symmetric chunky silhouette; eyes stay high-contrast and readable.
+  const rows=[[14,4],[10,4],[7,3],[5,3],[4,3],[3,4],[2,5],[1,7],[1,9],[2,11],[4,13],[6,15]];
+  rows.forEach(([x,w],i)=>{let y=8+i;rect(x,y,w,1,O);rect(32-x-w,y,w,1,O);});
+  for(let y=9;y<19;y++){let left=Math.max(2,Math.floor(2+Math.abs(y-13)*.32));rect(left,y,32-left*2,1,p.main)}
+  rect(5,10,22,3,p.main);rect(7,9,18,2,p.light);rect(4,14,24,4,p.main);rect(6,18,20,2,p.shadow);
+  rect(7,13,3,3,p.white);pixel(8,14,p.black);rect(22,13,3,3,p.white);pixel(23,14,p.black);
+  if(detail>1){rect(4,16,3,1,p.light);rect(25,16,3,1,p.light);pixel(12,18,p.shadow);pixel(19,18,p.shadow)}
+  if(detail>2){pixel(10,11,p.light);pixel(12,10,p.light);pixel(20,11,p.light);pixel(17,19,O)}
+ }else if(kind==='bat'){
+  rect(12,10,8,12,O);rect(9,12,14,8,p.shadow);rect(5,8,7,4,O);rect(2,6,6,5,O);rect(2,11,10,7,p.main);rect(20,8,7,4,O);rect(24,6,6,5,O);rect(20,11,10,7,p.main);rect(11,10,10,12,O);rect(12,11,8,10,p.shadow);rect(13,13,6,5,p.main);pixel(14,14,p.white);pixel(18,14,p.white);pixel(14,14,p.red);pixel(18,14,p.red);rect(13,20,2,4,O);rect(18,20,2,4,O);
+ }else if(kind==='goblin'){
+  rect(9,7,14,3,O);rect(6,10,20,12,O);rect(8,9,16,12,p.main);rect(5,11,4,5,O);rect(23,11,4,5,O);rect(10,13,4,4,p.white);pixel(12,14,p.black);rect(18,13,4,4,p.white);pixel(20,14,p.black);rect(13,18,6,2,O);rect(11,22,4,5,O);rect(18,22,4,5,O);rect(8,27,7,2,O);rect(17,27,7,2,O);rect(10,7,12,3,p.light);if(detail>1){rect(7,18,3,2,p.shadow);rect(22,18,3,2,p.shadow)}
+ }else if(kind==='sword'){
+  // Diagonal blade, crossguard and wrapped grip
+  for(let i=0;i<17;i++){pixel(24-i,4+i,O);pixel(25-i,4+i,O);pixel(24-i,3+i,p.metalLight);pixel(23-i,4+i,p.metal)}
+  rect(7,19,14,3,O);rect(9,20,10,1,p.gold);rect(13,21,5,7,O);rect(14,22,3,5,p.brown);for(let y=22;y<27;y+=2)rect(14,y,3,1,p.gold);rect(12,27,7,3,O);rect(13,28,5,1,p.metal);
+ }else if(kind==='shield'){
+  rect(7,4,18,3,O);rect(5,7,22,14,O);rect(7,21,18,4,O);rect(10,25,12,3,O);rect(12,28,8,2,O);rect(7,8,18,12,p.brown);rect(9,8,14,12,p.gold);rect(11,9,10,10,p.metal);rect(14,10,4,8,p.metalLight);rect(14,14,4,4,p.gold);if(detail>1){rect(7,9,2,10,O);rect(23,9,2,10,O)}
+ }else if(kind==='potion'){
+  rect(12,3,8,3,O);rect(13,4,6,2,p.gold);rect(11,6,10,3,O);rect(8,9,16,15,O);rect(7,12,18,8,O);rect(9,10,14,12,p.red);rect(11,11,10,2,p.light);rect(9,18,14,3,p.shadow);rect(12,24,8,2,O);rect(13,26,6,2,O);rect(14,28,4,1,O);if(detail>1)rect(10,13,2,4,p.white);
+ }else if(kind==='herb'){
+  rect(15,8,3,20,O);rect(14,11,2,13,p.shadow);rect(8,7,8,6,O);rect(5,5,10,6,O);rect(7,6,7,4,p.main);rect(17,12,8,6,O);rect(19,13,7,4,O);rect(10,17,7,5,O);rect(7,17,6,4,O);rect(16,20,8,5,O);rect(17,21,6,3,p.main);rect(10,18,5,3,p.light);rect(12,27,9,2,O);if(detail>1){pixel(9,7,p.light);pixel(21,14,p.light)}
+ }else if(kind==='rock'){
+  rect(9,5,13,3,O);rect(5,8,21,5,O);rect(3,13,26,10,O);rect(6,23,20,4,O);rect(10,27,12,2,O);rect(8,9,15,3,p.metal);rect(5,13,22,8,p.bg);rect(7,14,14,5,p.metal);rect(9,22,14,3,p.shadow);if(detail>1){pixel(18,12,p.metalLight);pixel(11,15,p.metalLight);pixel(22,19,O)}
+ }
+ // Controlled seed-based small accents for variation without blur.
+ if(detail===3 && kind!=='sword' && kind!=='shield' && kind!=='potion'){
+  for(let i=0;i<5;i++){let x=4+Math.floor(rng()*24),y=5+Math.floor(rng()*20);if(rng()>.5)pixel(x,y,p.light)}
+ }
+ if(grid){ctx.strokeStyle='#ffffff35';ctx.lineWidth=.035;for(let i=0;i<=32;i++){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,32);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(32,i);ctx.stroke()}}
+ ctx.restore();document.getElementById('status').textContent=kindLabel(kind)+' / '+n+'×'+n+' / '+document.getElementById('paletteSelect').selectedOptions[0].text;
+ document.getElementById('palette').innerHTML=Object.values(p).slice(0,6).map(c=>'<span class="swatch" style="background:'+c+'"></span>').join('');
+}
+function kindLabel(k){return ({slime:'スライム',bat:'コウモリ',goblin:'小鬼',sword:'剣',shield:'盾',potion:'薬瓶',herb:'草',rock:'岩'})[k]}
+document.getElementById('generate').onclick=()=>{seed++;draw()};
+document.getElementById('download').onclick=()=>{const a=document.createElement('a');a.download= document.getElementById('kind').value+'_'+canvas.width+'.png';a.href=canvas.toDataURL('image/png');a.click()};
+document.getElementById('transparent').onclick=e=>{transparent=!transparent;e.target.textContent='背景：'+(transparent?'透明':'表示');draw()};
+document.getElementById('gridToggle').onclick=e=>{grid=!grid;e.target.textContent='グリッド：'+(grid?'ON':'OFF');draw()};
+['kind','size','paletteSelect','detail'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{document.getElementById('detailValue').textContent=['少','中','多'][+document.getElementById('detail').value-1];draw()}));
+draw();
+</script>
 </body>
 </html>
