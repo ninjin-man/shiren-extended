@@ -343,4 +343,44 @@ if(restored)el('studioDrawInfo').textContent+= ' / 保存した作業データ�
 })();
 
 </script>
-<script src="sfc_analysis_lab_v4.js" defer></script></body></html>
+<script src="sfc_analysis_lab_v4.js" defer></script><style id="iphone-native-upload-fix">
+/* iPhone Safari: use the real file input, never a scripted click on an invisible input. */
+#studioReferenceFile{position:static!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:52px!important;opacity:1!important;pointer-events:auto!important;display:block!important;visibility:visible!important;padding:8px!important;color:#edfaff!important;background:#172e3e!important;border:1px solid #8ac9db!important;border-radius:10px!important;font-size:16px!important;touch-action:manipulation!important;}
+#studioReferenceFile::file-selector-button{padding:10px 12px;margin-right:9px;border:1px solid #9acbd4;border-radius:8px;background:#2d6579;color:white;font-size:15px;}
+.lab-native-upload{width:100%;padding:10px;border:1px solid #6c9bab;border-radius:10px;background:#152c38;}
+.lab-native-upload label{display:block;font-size:14px;font-weight:700;color:#f2fbff;margin:0 0 6px;}
+.lab-native-upload .lab-upload-tip{font-size:12px;color:#c3d8e4;margin-top:7px;line-height:1.5;}
+</style>
+<script id="iphone-native-upload-v5">
+/* Replace the proxy button with the actual native input; preserve both existing change listeners. */
+(function(){
+ function prepare(){
+  const file=document.getElementById('studioReferenceFile');
+  if(!file)return;
+  const oldLabel=file.closest('label');
+  const oldPlace=document.createElement('p');
+  oldPlace.className='studio-note';
+  oldPlace.textContent='原寸PNGの読み込みは下の「原作ドット解析ラボ」から行えます。';
+  const button=document.getElementById('labPickFile');
+  if(button){
+   const wrap=document.createElement('div');wrap.className='lab-native-upload';
+   const title=document.createElement('label');title.htmlFor='studioReferenceFile';title.textContent='原寸PNGを選択（iPhone・ファイル／写真）';
+   const tip=document.createElement('div');tip.className='lab-upload-tip';tip.textContent='青いファイル選択欄を直接タップします。選択後、原作の色数・輪郭を解析します。';
+   button.replaceWith(wrap);wrap.append(title,file,tip);
+   if(oldLabel)oldLabel.replaceWith(oldPlace);
+  }else if(oldLabel){
+   oldLabel.style.opacity='1';
+   oldLabel.style.pointerEvents='auto';
+  }
+  file.addEventListener('change',()=>{
+   const f=file.files&&file.files[0];
+   if(!f)return;
+   const notice=document.getElementById('labNotice');
+   if(notice)notice.textContent='「'+f.name+'」を読み込み中です…';
+  });
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',prepare,{once:true});
+ else prepare();
+})();
+</script>
+</body></html>
