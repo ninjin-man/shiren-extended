@@ -323,13 +323,41 @@ async function analyzeRemote(){
  }
 }
 el('studioAnalyze').onclick=()=>{if(refLocalURL){showStatus('ローカルPNGを解析済みです。原作を再選択すると外部画像の解析を試します。');return}analyzeRemote()};
-el('studioReferenceFile').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;
- try{if(!f.type.startsWith('image/')||f.size>5000000)throw Error('画像ファイル（5MB以下）を選択してください');
- const b=await createImageBitmap(f);try{const off=document.createElement('canvas');off.width=b.width;off.height=b.height;if(off.width>512||off.height>512)throw Error('幅と高さは512px以下の原寸画像にしてください');const c=off.getContext('2d',{willReadFrequently:true});c.imageSmoothingEnabled=false;c.drawImage(b,0,0);
- const d=c.getImageData(0,0,off.width,off.height);if(refLocalURL)URL.revokeObjectURL(refLocalURL);refLocalURL=URL.createObjectURL(f);el('studioRefImage').src=refLocalURL;refW=off.width;refH=off.height;el('studioRefCaption').textContent=`${refW}×${refH}px / 端末から読込：${f.name}`;setRefMetrics(d.data,refW,refH);
- if(refW>64||refH>64)showStatus('画素解析成功。ただし大きな画像です。スクリーンショットを保存した場合は、拡大画像の色数を数えている可能性があります。原寸PNGの使用を推奨します。',true);
- }finally{b.close()}
- }catch(err){showStatus('原作PNGの読み込み失敗: '+err.message,true)}e.target.value='';
+el('studioReferenceFile').onchange=async e=>{
+ const f=e.target.files?.[0];if(!f)return;
+ const notice=document.getElementById('labNotice');
+ const notify=(message,isError=false)=>{showStatus(message,isError);if(notice)notice.textContent=message;};
+ notify('選択済み：'+f.name+'。画像データを確認しています…');
+ let imageUrl=null;
+ try{
+  if((f.type && !f.type.startsWith('image/')) || f.size>5000000)throw Error('5MB以下の画像を選んでください');
+  imageUrl=URL.createObjectURL(f);
+  const img=await new Promise((resolve,reject)=>{
+   const im=new Image();let done=false;
+   const finish=(error)=>{if(done)return;done=true;clearTimeout(timer);im.onload=im.onerror=null;error?reject(error):resolve(im)};
+   const timer=setTimeout(()=>finish(new Error('画像の読み込みがタイムアウトしました')),10000);
+   im.onload=()=>finish(null);im.onerror=()=>finish(new Error('画像を開けません。PNG形式の画像を指定してください'));
+   im.src=imageUrl;
+  });
+  const width=img.naturalWidth||img.width,height=img.naturalHeight||img.height;
+  if(!width||!height||width>512||height>512)throw Error('画像サイズ '+width+'×'+height+'px。原寸512px以下を指定してください');
+  const off=document.createElement('canvas');off.width=width;off.height=height;
+  const ctx=off.getContext('2d',{willReadFrequently:true});
+  if(!ctx)throw Error('画像解析用のCanvasが使えません');
+  ctx.imageSmoothingEnabled=false;ctx.drawImage(img,0,0);
+  const pixels=ctx.getImageData(0,0,width,height);
+  if(refLocalURL)URL.revokeObjectURL(refLocalURL);
+  refLocalURL=imageUrl;imageUrl=null;
+  el('studioRefImage').src=refLocalURL;
+  refW=width;refH=height;
+  el('studioRefCaption').textContent=width+'×'+height+'px / 端末から読込：'+f.name;
+  setRefMetrics(pixels.data,width,height);
+  window.dispatchEvent(new CustomEvent('shiren:reference-loaded',{detail:{image:img,fileName:f.name,width,height}}));
+  if(width>128||height>128)notify('画像は読み込めましたが '+width+'×'+height+'px です。原作の色数を正確に測るには128px以下の原寸PNGを選んでください。',true);
+  else notify('読込成功：'+f.name+'（'+width+'×'+height+'px）。原作ドット解析ラボに色数と輪郭を表示しました。');
+ }catch(err){
+  notify('読み込み失敗：'+(err?.message||String(err))+'。画像形式とサイズを確認してください。',true);
+ }finally{if(imageUrl)URL.revokeObjectURL(imageUrl);e.target.value='';}
 };
 el('studioRefImage').addEventListener('click',e=>{if(!refData){el('studioPixelInfo').textContent='画素の読み取りができていません。原寸PNGをファイルから取り込んでください。';return}
  const rc=e.currentTarget.getBoundingClientRect(),x=Math.floor((e.clientX-rc.left)*refW/rc.width),y=Math.floor((e.clientY-rc.top)*refH/rc.height);
@@ -343,7 +371,7 @@ if(restored)el('studioDrawInfo').textContent+= ' / 保存した作業データ�
 })();
 
 </script>
-<script src="sfc_analysis_lab_v4.js" defer></script><style id="iphone-native-upload-fix">
+<script src="sfc_analysis_lab_v6.js" defer></script><style id="iphone-native-upload-fix">
 /* iPhone Safari: use the real file input, never a scripted click on an invisible input. */
 #studioReferenceFile{position:static!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:52px!important;opacity:1!important;pointer-events:auto!important;display:block!important;visibility:visible!important;padding:8px!important;color:#edfaff!important;background:#172e3e!important;border:1px solid #8ac9db!important;border-radius:10px!important;font-size:16px!important;touch-action:manipulation!important;}
 #studioReferenceFile::file-selector-button{padding:10px 12px;margin-right:9px;border:1px solid #9acbd4;border-radius:8px;background:#2d6579;color:white;font-size:15px;}
@@ -351,7 +379,7 @@ if(restored)el('studioDrawInfo').textContent+= ' / 保存した作業データ�
 .lab-native-upload label{display:block;font-size:14px;font-weight:700;color:#f2fbff;margin:0 0 6px;}
 .lab-native-upload .lab-upload-tip{font-size:12px;color:#c3d8e4;margin-top:7px;line-height:1.5;}
 </style>
-<script id="iphone-native-upload-v5">
+<script id="iphone-native-upload-v6">
 /* Replace the proxy button with the actual native input; preserve both existing change listeners. */
 (function(){
  function prepare(){
@@ -372,12 +400,7 @@ if(restored)el('studioDrawInfo').textContent+= ' / 保存した作業データ�
    oldLabel.style.opacity='1';
    oldLabel.style.pointerEvents='auto';
   }
-  file.addEventListener('change',()=>{
-   const f=file.files&&file.files[0];
-   if(!f)return;
-   const notice=document.getElementById('labNotice');
-   if(notice)notice.textContent='「'+f.name+'」を読み込み中です…';
-  });
+  // Status is controlled by the single image loader; avoid stale loading messages.
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',prepare,{once:true});
  else prepare();
