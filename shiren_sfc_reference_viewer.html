@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ドット絵工房 | スライム輪郭エンジン v2</title>
+<title>ドット絵工房 | スライム陰影エンジン v3</title>
 <style>
 :root{color-scheme:dark;--bg:#101722;--panel:#1b2636;--panel2:#243247;--edge:#394d64;--txt:#f5f6f8;--sub:#adbed0;--accent:#7ed3cf;--gold:#f8d98b}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif;background:var(--bg);color:var(--txt);margin:0;padding:0 12px 48px;line-height:1.5}
@@ -17,13 +17,13 @@ button{border:1px solid #50687c;background:#30465d;color:var(--txt);border-radiu
 </style>
 </head>
 <body><main>
-<header><div class="steps">32×32px / iPhone対応 / 対称輪郭 v2</div><h1>ドット絵工房：スライム輪郭エンジン v2</h1><p class="muted">SFC時代の少色数・明確な輪郭・色面分割を参考にした、独自デザインの制作ツールです。</p></header>
+<header><div class="steps">32×32px / iPhone対応 / 対称輪郭 + 陰影 v3</div><h1>ドット絵工房：スライム陰影エンジン v3</h1><p class="muted">SFC時代の少色数・明確な輪郭・色面分割を参考にした、独自デザインの制作ツールです。</p></header>
 <section aria-label="スライム自動生成"><h2>① 自動生成：4案から選ぶ</h2><div class="controls">
 <label class="field">体の色<select id="scheme"><option value="blue">青・水色</option><option value="green">緑・若草</option><option value="purple">紫・すみれ</option><option value="amber">橙・琥珀</option></select></label>
 <label class="field">表情<select id="mood"><option value="cute">かわいい</option><option value="cheeky">いたずら</option><option value="sleepy">ねむそう</option></select></label>
 <button class="primary" id="generate">✦ 4案を自動生成</button></div>
 <label class="silhouette-toggle"><input type="checkbox" id="silhouetteView"> 輪郭のみで4案を比較する（色と顔を隠す）</label>
-<div class="gallery" id="gallery" aria-label="生成した4案"></div><p class="gridinfo">4案とも外形は完全左右対称です。もち＝丸い安定形、しずく＝先細り、かさ＝上が広く下が細い、双角＝左右対の角。輪郭は1行ずつ設計し、乱数によるギザつきを排除しています。</p></section>
+<div class="gallery" id="gallery" aria-label="生成した4案"></div><p class="gridinfo">4案とも外形は完全左右対称です。今回は陰影を強化し、左上光源・中央の中間色・右下の影・下腹の深い影を帯状に配置しています。もち＝丸い安定形、しずく＝先細り、かさ＝上が広く下が細い、双角＝左右対の角。</p></section>
 <section aria-label="原作見本との比較"><h2>② 原作と並べて確認</h2><div class="refcontrols"><label for="reference">原作見本</label><select id="reference"></select><a id="source" href="#" target="_blank" rel="noopener">出典ページ</a></div>
 <div class="details"><div class="refpane"><strong>原作（参考・編集不可）</strong><img id="refImage" alt="SFC原作のドット絵"><span id="refCaption" class="muted"></span><span id="refError" class="ref-error" hidden>原作画像を読み込めません。出典ページをご確認ください。</span></div><div class="previewpane"><strong>選択中のオリジナル</strong><canvas id="compare" width="32" height="32" aria-label="選択中の作品"></canvas><span id="compareCaption" class="muted">32×32px</span></div></div>
 <details><summary>品質を見るポイント</summary><p class="muted">等倍で表情が読めるか、輪郭が途切れていないか、陰影が塊としてまとまっているか、色数を増やしすぎていないかを比較します。自動数値は品質を保証しません。</p></details></section>
@@ -112,35 +112,68 @@ function createContour(variant,seed){
  return mask;
 }
 function makeSprite(variant,seed,scheme,mood){
- const random=rng(seed+variant*78331),P=SCHEMES[scheme],pixels=new Uint8ClampedArray(N*N*4);
+ const P=SCHEMES[scheme],pixels=new Uint8ClampedArray(N*N*4);
  const mask=createContour(variant,seed);
  const eyeY=[18,18,13,19][variant];
  function inBody(x,y){return x>=0&&y>=0&&x<N&&y<N&&mask[y*N+x]===1;}
  function put(x,y,c){
-  if(!inBody(x,y))return; // facial features/shine cannot escape the silhouette
+  if(!inBody(x,y))return;
   const i=(y*N+x)*4,a=hexRGB(c);
   pixels[i]=a[0];pixels[i+1]=a[1];pixels[i+2]=a[2];pixels[i+3]=255;
  }
  function rect(x,y,w,h,c){for(let yy=y;yy<y+h;yy++)for(let xx=x;xx<x+w;xx++)put(xx,yy,c);}
- // 1px contour; coherent left-side light and right/bottom shadow, no noise.
+ const rowL=new Int16Array(N).fill(-1),rowR=new Int16Array(N).fill(-1);
+ let top=N,bottom=-1;
+ for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(inBody(x,y)){
+  if(rowL[y]===-1)rowL[y]=x; rowR[y]=x; if(y<top)top=y; if(y>bottom)bottom=y;
+ }
+ const bodyH=Math.max(1,bottom-top);
+ function shadeAt(x,y){
+  const left=rowL[y],right=rowR[y],width=Math.max(1,right-left);
+  const nx=width<=1?0:((x-left)/width)*2-1;
+  const ny=bodyH<=0?0:((y-top)/bodyH)*2-1;
+  let light=-0.95*nx-0.92*ny;
+  light+=0.22*(1-Math.abs(nx));
+  light+=0.08*(ny<-0.15?1:0);
+  light-=0.30*Math.max(0,nx-0.08);
+  light-=0.42*Math.max(0,ny+0.18)*(0.55+0.45*Math.abs(nx));
+  if(variant===0)light+=0.07*(1-Math.abs(ny));
+  if(variant===1)light+=ny<-0.4?0.12:0;
+  if(variant===2){if(y<=top+5&&Math.abs(nx)<0.82)light+=0.10; if(y>=17&&y<=20)light-=0.16;}
+  if(variant===3){if(y<=12&&Math.abs(nx)>0.35)light+=0.14; if(y>=22)light-=0.10;}
+  if(light>1.0)return P[5];
+  if(light>0.42)return P[4];
+  if(light>-0.12)return P[3];
+  if(light>-0.62)return P[2];
+  return P[1];
+ }
  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(inBody(x,y)){
   const edge=!inBody(x+1,y)||!inBody(x-1,y)||!inBody(x,y-1)||!inBody(x,y+1);
-  let col=P[3];
-  if(y>=25||(x>=23&&y>=15))col=P[1];
-  else if(x>=20||(y>=23&&x>=10))col=P[2];
-  else if(x<=12&&y<=18)col=P[4];
-  if(edge)col=(y<14&&x<14)?P[1]:P[0];
+  const left=rowL[y],right=rowR[y],width=Math.max(1,right-left),nx=width<=1?0:((x-left)/width)*2-1;
+  const ny=bodyH<=0?0:((y-top)/bodyH)*2-1;
+  let col=shadeAt(x,y);
+  if(edge){
+   if(nx<-0.5&&ny<-0.18)col=P[2];
+   else if(ny>0.55||nx>0.55)col=P[0];
+   else col=P[1];
+  }
   put(x,y,col);
  }
- // Solid color clusters for glossy jelly. No antialias or isolated random pixels.
- const hy=[14,14,11,16][variant];
- for(let y=hy-4;y<=hy+2;y++)for(let x=5;x<=17;x++)if(inBody(x,y)&&inBody(x-1,y)&&inBody(x,y-1)){
-  if(((x-11)**2/45+(y-hy)**2/13)<1 && x<15)put(x,y,P[4]);
+ const shineY=[14,13,10,15][variant],shineCX=[11,11,11,10][variant];
+ for(let y=shineY-4;y<=shineY+1;y++)for(let x=shineCX-6;x<=shineCX+4;x++)if(inBody(x,y)){
+  const lit=((x-shineCX)**2/28)+((y-shineY)**2/8);
+  if(lit<1 && x<=shineCX+2 && y<=shineY+1)put(x,y,P[4]);
  }
- for(let y=hy-3;y<=hy-1;y++)for(let x=8;x<=13;x++)if(inBody(x,y)&&inBody(x-1,y)&&((x-11)**2/16+(y-(hy-2))**2/3)<1.2)put(x,y,P[5]);
- for(let y=16;y<22;y++)for(let x=6;x<10;x++)if(inBody(x,y)&&inBody(x-1,y)&&((x-8)**2/9+(y-18.5)**2/14)<.8)put(x,y,P[4]);
- for(let y=25;y<=27;y++)for(let x=10;x<=20;x++)if(inBody(x,y)&&inBody(x,y+1))put(x,y,y===25?P[3]:P[2]);
- if(variant===2){ // cap rim defines the deliberate mushroom-like form
+ for(let y=shineY-3;y<=shineY-1;y++)for(let x=shineCX-2;x<=shineCX+1;x++)if(inBody(x,y)){
+  const core=((x-(shineCX-1))**2/6)+((y-(shineY-2))**2/2.2);
+  if(core<1.15)put(x,y,P[5]);
+ }
+ for(let y=Math.max(top+2,bottom-4);y<=bottom-1;y++)for(let x=8;x<=23;x++)if(inBody(x,y)){
+  const left=rowL[y],right=rowR[y],width=Math.max(1,right-left);
+  const nx=width<=1?0:((x-left)/width)*2-1;
+  if(Math.abs(nx)<0.72&&y<bottom)put(x,y,y===bottom-4?P[2]:P[1]);
+ }
+ if(variant===2){
   for(let x=7;x<=24;x++)if(inBody(x,17))put(x,17,P[2]);
   for(let x=9;x<=22;x++)if(inBody(x,18))put(x,18,P[3]);
  }
@@ -148,8 +181,6 @@ function makeSprite(variant,seed,scheme,mood){
   if(inBody(9,y)&&inBody(10,y))put(10,y,P[4]);
   if(inBody(21,y)&&inBody(22,y))put(21,y,P[2]);
  }}
- // Mirror-matched eye outline, with directional light inside the pupils.
- // Eyes of width 4 start at x=10 and x=18, symmetric around x=15.5.
  function eye(ex,ey){
   if(mood==='sleepy'){
    rect(ex,ey,4,1,P[0]);put(ex+1,ey-1,P[1]);put(ex+2,ey-1,P[1]);
