@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ドット絵工房 v6.3 | マムル研究→オリジナル小獣</title>
+<title>ドット絵工房 v6.4 | マムル研究→オリジナル小獣</title>
 <style>
 :root{color-scheme:dark;--bg:#101722;--panel:#1b2737;--inner:#26374b;--edge:#455972;--ink:#f4f6fb;--muted:#b4c3d1;--acc:#89ded2;--gold:#f7cf79}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',sans-serif;padding:0 12px 38px}main{max-width:850px;margin:auto}
@@ -10,14 +10,14 @@ button,input,select{font:inherit}button{padding:9px 12px;min-height:42px;color:v
 .gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.cand{min-width:0;background:var(--inner);border:2px solid var(--edge);border-radius:10px;padding:9px 5px;display:flex;align-items:center;flex-direction:column;gap:5px;text-align:center}.cand.active{border-color:var(--gold);box-shadow:0 0 0 1px #f7cf7980}.cand canvas{height:126px;width:126px;max-width:100%;image-rendering:pixelated;background:repeating-conic-gradient(#304255 0 25%,#1c2c3b 0 50%) 50%/12px 12px}.cand strong{font-size:13px}.cand small{font-size:11px}
 .editor-layout{display:flex;gap:15px;flex-wrap:wrap}.editor-pane{flex:1;min-width:265px}.side-pane{flex:1;min-width:200px}.editorbox{display:flex;justify-content:center;overflow:auto;background:#0e1c2c;border:1px solid var(--edge);padding:12px;border-radius:9px}.editorframe{position:relative;width:264px;height:264px;flex:none;background:repeating-conic-gradient(#304255 0 25%,#1c2c3b 0 50%) 50%/22px 22px}.editorframe canvas{width:264px;height:264px;display:block;image-rendering:pixelated;touch-action:none}.editorframe.grid:after{content:'';position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(#ffffff18 1px,transparent 1px),linear-gradient(90deg,#ffffff18 1px,transparent 1px);background-size:11px 11px}.toolbar{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}.toolbar button{flex:1;min-width:73px;font-size:13px}.palette{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.palette button{min-width:30px;min-height:30px;width:30px;height:30px;border-radius:6px;padding:0}.palette button.active{outline:2px solid var(--gold);outline-offset:1px}.compare{display:flex;gap:15px;justify-content:center;align-items:center}.compare canvas{width:118px;height:118px;image-rendering:pixelated;background:repeating-conic-gradient(#304255 0 25%,#1c2c3b 0 50%) 50%/12px 12px}.filelike{padding:10px 12px;display:block;background:#354c61;border:1px solid #5a7185;border-radius:9px;font-size:13px;position:relative;cursor:pointer}.filelike input{position:absolute;opacity:0;width:1px;height:1px}.switch{display:flex;align-items:center;gap:7px;margin:9px 0;font-size:13px}.switch input{width:18px;height:18px;accent-color:var(--acc)}#metrics{white-space:pre-line;font-size:12px;color:var(--muted)}@media(min-width:680px){.gallery{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style></head><body><main>
-<header><div class="tag">SFC原作研究 / iPhone専用対応 / v6</div><h1>マムルから学ぶ オリジナル小獣工房</h1><p class="muted">輪郭を崩さず、原作の描き込み方を研究して別デザインを生成します。今回は特に、目の位置・耳・腹・鼻口まわりの描き込みを改善します。原作画素のコピー・再配置はしません。</p></header>
+<header><div class="tag">SFC原作研究 / iPhone対応 / v6.4</div><h1>マムルから学ぶ オリジナル小獣工房</h1><p class="muted">輪郭を崩さず、原作の描き込み方を研究して別デザインを生成します。今回は特に、目の位置・耳・腹・鼻口まわりの描き込みを改善します。原作画素のコピー・再配置はしません。</p></header>
 <section><h2>① マムルを参照・特徴を抽出</h2>
 <div class="refrow"><div class="refimg"><img id="refImage" alt="SFC版マムルの参考画像"></div><div><strong>基準：SFC版 マムル</strong><p class="muted">原作：16×18px。丸い小獣の形、耳・腹部・目・しっぽなどの情報の置き方を研究する。</p><a href="https://mysterydungeonwiki.com/wiki/File:Shiren_1_SFC_-_Mamel.png" target="_blank" rel="noopener">原作PNGの出典を開く</a></div></div>
-<div class="feature-grid"><div><small>参照寸法</small><strong id="sizeInfo">16×18px</strong></div><div><small>輪郭の横/縦比</small><strong id="ratioInfo">0.89（資料値）</strong></div><div><small>原作の色数</small><strong id="colorsInfo">未解析</strong></div><div><small>色と形の入力</small><strong id="sourceInfo">寸法のみ</strong></div></div>
+<div class="feature-grid"><div><small>参照寸法</small><strong id="sizeInfo">16×18px</strong></div><div><small>輪郭の横/縦比</small><strong id="ratioInfo">0.89（資料値）</strong></div><div><small>原作の色数</small><strong id="colorsInfo">未解析</strong></div><div><small>色と形の入力</small><strong id="sourceInfo">寸法のみ</strong></div><div><small>参照画像の明色比率</small><strong id="lightInfo">未解析</strong></div></div>
 <div class="row"><button id="analyze" type="button">原作PNGを画素解析</button><button id="resetReference" type="button">基準値に戻す</button></div>
 <label class="filelike" for="refUpload">画像から特徴を抽出（iPhoneの写真・ファイル）<input id="refUpload" type="file" accept="image/png,image/webp,image/jpeg,image/gif,image/*"></label>
 <p id="refStatus" class="status">自動取得できない場合は原寸PNGを保存して取り込んでください。</p>
-<p class="hint">解析結果の輪郭比率・描画面積率・色相・彩度は生成に反映されます。耳・顔などの意味づけは原作研究に基づく設計ルールで、画像認識による自動識別ではありません。</p></section>
+<p class="hint">輪郭比率・描画面積率・色相・彩度に加え、明るい低彩度ドットの比率を腹の大きさに最大1px反映します。耳・顔などの意味づけは原作研究に基づく設計ルールで、画像認識による自動識別ではありません。</p></section>
 <section><h2>② オリジナル小獣を4案生成</h2><div class="row"><button id="generate" class="primary">✦ 4案生成</button><button id="recolor">色だけ再生成</button></div>
 <label class="switch"><input type="checkbox" id="silhouette">輪郭のみ表示（4案比較）</label>
 <div id="gallery" class="gallery"></div><p class="muted">形は「まる耳」「葉耳」「たれ耳」「ふさ耳」。左右対称の輪郭を基準とし、細部の描き込みを優先します。</p></section>
@@ -30,7 +30,7 @@ button,input,select{font:inherit}button{padding:9px 12px;min-height:42px;color:v
 'use strict';
 const $=id=>document.getElementById(id),N=24,REF_URL='https://mysterydungeonwiki.com/images/3/3b/Shiren_1_SFC_-_Mamel.png';
 const LABELS=['まる耳','葉耳','たれ耳','ふさ耳'],SAVE_KEY='mamel_blueprint_v6';
-const BASE={w:16,h:18,ratio:16/18,coverage:null,colors:null,hue:191,sat:0.43,source:'資料値'};
+const BASE={w:16,h:18,ratio:16/18,coverage:null,lightShare:null,colors:null,hue:191,sat:0.43,source:'資料値'};
 let stats={...BASE},colorShift=0,seed=19731,candidates=[],choice=0,work=new Uint8ClampedArray(N*N*4),brush='#7bc0c8',currentTool='pen',undo=[],redo=[],drawing=false,previous=null,dirty=false,palette=[];
 const editor=$('editor'),ec=editor.getContext('2d',{willReadFrequently:true});
 $('refImage').src=REF_URL;
@@ -84,9 +84,11 @@ function make(v,seed){
  // A compact V-shaped inner-ear fold provides depth without a thick shadow band.
  for(const [x,y] of (v===2?[[6,9]]:[[8,8]]))innerPair(x,y,P[1]);
  // The light belly is a connected curved patch with a narrow muted seam.
+ // Light low-saturation pixel share informs belly breadth (+/-1px), not semantic part recognition.
+ const lightAdjust=Number.isFinite(stats.lightShare)?Math.round(clamp((stats.lightShare-0.3)*4,-1,1)):0;
  const belly=[2,3,5,6,6,5,4,2];
  for(let i=0;i<belly.length;i++){
-  const y=15+i,half=belly[i];
+  const y=15+i,half=belly[i]+(i>=2&&i<=5?lightAdjust:0);
   for(let x=12-half;x<=11+half;x++){
    if(!inside(x,y)||border(x,y))continue;
    const seam=(x===12-half||x===11+half);
@@ -100,15 +102,15 @@ function make(v,seed){
  }
  // Centered nose and a small upturned mouth, separate from the belly seam.
  pair(11,14,P[7]);
- pair(11,15,P[7]);
+ pair(11,15,P[6]);
  pair(10,16,P[7]);
  pair(11,16,P[9]);
- // Smaller Mamel-inspired eyes: one black pupil pixel per side, symmetrical around x=11.5.
+ // Balanced face: both eyes lowered 1px; exactly one black pupil per eye around x=11.5.
  // Four rows of 4 cells: w=white, k=black pupil, d=muted edge, .=transparent face.
  const eye=['....','.ww.','.wkd','..w.'];
  for(let ry=0;ry<eye.length;ry++)for(let rx=0;rx<4;rx++){
   const ch=eye[ry][rx];
-  if(ch!=='.')pair(7+rx,10+ry,P[ch==='d'?7:ch==='k'?10:8]);
+  if(ch!=='.')pair(7+rx,11+ry,P[ch==='d'?7:ch==='k'?10:8]);
  }
  // Cheek fur: short mirrored clusters rather than random isolated pixels.
  for(const [x,y,k] of [[6,14,3],[7,14,4],[7,15,3]])innerPair(x,y,P[k]);
@@ -132,8 +134,8 @@ function refresh(){render(editor,work);const met=metric(work);$('metrics').textC
 function setBrush(v){brush=v.toUpperCase();$('color').value=brush;$('palette').replaceChildren();palette.forEach(c=>{let b=document.createElement('button');b.type='button';b.title=c;b.style.background=c;b.setAttribute('aria-label',c);b.classList.toggle('active',c.toUpperCase()===brush);b.onclick=()=>setBrush(c);$('palette').append(b)})}
 function select(i,force=false){if(dirty&&!force&&!confirm('手修正を破棄して候補を切り替えますか？'))return;choice=i;work=candidates[i].pixels.slice();dirty=false;undo=[];redo=[];palette=candidates[i].palette;setBrush(palette[2]);refresh();[...$('gallery').children].forEach((c,j)=>c.classList.toggle('active',j===i));note('msg',LABELS[i]+'を選択しました。')}
 function paintCandidates(recover=null){$('gallery').replaceChildren();candidates=[0,1,2,3].map(i=>make(i,seed+i*193));candidates.forEach((c,i)=>{let btn=document.createElement('button');btn.type='button';btn.className='cand';btn.setAttribute('aria-label',c.name+'を選択');let canvas=document.createElement('canvas');canvas.width=N;canvas.height=N;preview(canvas,c);let label=document.createElement('strong');label.textContent=c.name;let small=document.createElement('small');const met=metric(c.pixels);small.textContent=`外形左右差 ${met.sym}px`;btn.append(canvas,label,small);btn.onclick=()=>select(i);$('gallery').append(btn)});const index=recover?clamp(recover.choice,0,3):0;select(index,true);if(recover&&recover.dirty){work=new Uint8ClampedArray(recover.work);dirty=true;refresh();note('msg','手修正の作業データを復元しました。')}else if(recover){note('msg','描き込み改良版 v6.1 を生成しました。')}}
-function featuresDisplay(){const s=stats;$('sizeInfo').textContent=`${s.w}×${s.h}px`;$('ratioInfo').textContent=s.ratio.toFixed(2);$('colorsInfo').textContent=s.colors==null?'未解析':s.colors+'色';$('sourceInfo').textContent=s.source;}
-function extract(image){const w=image.naturalWidth,h=image.naturalHeight;if(w>512||h>512||w<3||h<3)throw Error('画像サイズは3〜512pxにしてください');const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(image,0,0);const data=ctx.getImageData(0,0,w,h).data;let count=0,minX=w,maxX=-1,minY=h,maxY=-1,byColor=new Map(),colSet=new Set();for(let y=0;y<h;y++)for(let x=0;x<w;x++){const j=(y*w+x)*4;if(data[j+3]<110)continue;count++;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);const color=[data[j],data[j+1],data[j+2]];colSet.add(color.join(','));const key=color.map(v=>Math.floor(v/16)*16+8).join(',');const a=byColor.get(key)||{n:0,r:0,g:0,b:0};a.n++;a.r+=color[0];a.g+=color[1];a.b+=color[2];byColor.set(key,a)}if(!count)throw Error('不透明なドットがありません');let sorted=[...byColor.values()].sort((a,b)=>b.n-a.n),color=sorted.map(x=>({n:x.n,rgb:[x.r/x.n,x.g/x.n,x.b/x.n],hsl:hsl([x.r/x.n,x.g/x.n,x.b/x.n])}));let candidate=color.filter(c=>c.hsl[1]>.23&&c.hsl[2]>.18&&c.hsl[2]<.8).sort((a,b)=>b.n-a.n)[0]||color[0];const [hue,sat]=candidate.hsl;return {w,h,ratio:(maxX-minX+1)/(maxY-minY+1),coverage:count/(w*h),colors:colSet.size,hue,sat:clamp(sat,.18,.8),source:'画素解析済み'};}
+function featuresDisplay(){const s=stats;$('sizeInfo').textContent=`${s.w}×${s.h}px`;$('ratioInfo').textContent=s.ratio.toFixed(2);$('colorsInfo').textContent=s.colors==null?'未解析':s.colors+'色';$('sourceInfo').textContent=s.source;$('lightInfo').textContent=Number.isFinite(s.lightShare)?Math.round(s.lightShare*100)+'%':'未解析';}
+function extract(image){const w=image.naturalWidth,h=image.naturalHeight;if(w>512||h>512||w<3||h<3)throw Error('画像サイズは3〜512pxにしてください');const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(image,0,0);const data=ctx.getImageData(0,0,w,h).data;let count=0,lightCount=0,minX=w,maxX=-1,minY=h,maxY=-1,byColor=new Map(),colSet=new Set();for(let y=0;y<h;y++)for(let x=0;x<w;x++){const j=(y*w+x)*4;if(data[j+3]<110)continue;count++;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);const color=[data[j],data[j+1],data[j+2]];const bright=(color[0]+color[1]+color[2])/3;const spread=Math.max(...color)-Math.min(...color);if(bright>=165&&spread<=85)lightCount++;colSet.add(color.join(','));const key=color.map(v=>Math.floor(v/16)*16+8).join(',');const a=byColor.get(key)||{n:0,r:0,g:0,b:0};a.n++;a.r+=color[0];a.g+=color[1];a.b+=color[2];byColor.set(key,a)}if(!count)throw Error('不透明なドットがありません');let sorted=[...byColor.values()].sort((a,b)=>b.n-a.n),color=sorted.map(x=>({n:x.n,rgb:[x.r/x.n,x.g/x.n,x.b/x.n],hsl:hsl([x.r/x.n,x.g/x.n,x.b/x.n])}));let candidate=color.filter(c=>c.hsl[1]>.23&&c.hsl[2]>.18&&c.hsl[2]<.8).sort((a,b)=>b.n-a.n)[0]||color[0];const [hue,sat]=candidate.hsl;return {w,h,ratio:(maxX-minX+1)/(maxY-minY+1),coverage:count/(w*h),lightShare:lightCount/count,colors:colSet.size,hue,sat:clamp(sat,.18,.8),source:'画素解析済み'};}
 async function loadPic(src,show=false){const im=new Image();if(!show)im.crossOrigin='anonymous';return new Promise((resolve,reject)=>{im.onload=()=>resolve(im);im.onerror=()=>reject(Error('画像を取得できません'));im.src=src})}
 $('analyze').onclick=async()=>{note('refStatus','原作の画像データを取得中…');try{let im=await loadPic(REF_URL);stats=extract(im);colorShift=0;featuresDisplay();seed+=71;paintCandidates();note('refStatus','画素解析しました。特徴が新しい4案に反映されました。')}catch(e){note('refStatus','外部サイトからの画素取得が制限されています。原寸PNGを保存し、下の画像選択欄から取り込んでください。',true)}};
 $('refUpload').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;const url=URL.createObjectURL(f);try{if(f.size>5000000)throw Error('5MB以下の画像にしてください');const image=await loadPic(url,true);const v=extract(image);if(v.w>128||v.h>128)note('refStatus','大きな画像です。原作の原寸16×18pxを使うと正確に分析できます。',true);else note('refStatus','画像の画素特徴を抽出しました。生成に反映しました。');stats=v;colorShift=0;$('refImage').src=url;featuresDisplay();seed+=71;paintCandidates()}catch(err){note('refStatus','解析できません: '+err.message,true)}finally{e.target.value=''; /* retain object URL while preview uses it */}};
