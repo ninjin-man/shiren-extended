@@ -81,3 +81,14 @@
 - 本体GitHub更新コミット：`6a1fbad069ee3668427ccb942e5af59a21659749`。Pages確認URL：<https://ninjin-man.github.io/shiren-extended/shiren_sfc_reference_viewer.html?v=63>。
 - Node描画108条件のRGB・輪郭対称、色数、面積検証はパス。iPhone Safariの実機確認はまだ。
 - 目の改善は評価待ち。今後は**黒目を勝手に増やさず**、ユーザーの反応に応じて1px単位で調整。
+
+## 10. v6.4 顔バランス確定／原作解析の部位への接続（2026-11-01）
+
+- ユーザー：「かなり良くなってきた。バランスだけ調整して一回先進めよう」
+- v6.3を基準に**目の共通パターンは固定** `['....','.ww.','.wkd','..w.']`。黒目は左右各1pxのまま、描画開始yを10→11へ1px下げた。
+- 中心の鼻口の色を1箇所だけ濃色からクリーム系の境界色へ変更し、顔全体の詰まりを緩和した。外形・耳外形の生成関数は無変更。
+- 次フェーズの最小実装：`extract(image)`で不透明ピクセルのうち**明るく、彩度差が小さい色**（RGB平均>=165、max-min<=85）の割合 `lightShare` を計測・UI表示。これを `make()` の腹の中段4行（i=2〜5）の横幅に、左右各最大1px反映。これは**腹の意味的な自動認識ではなく色面占有率の代理指標**。将来は実際の部位解析を追加する。
+- `BASE.lightShare=null` を追加。既存 `SAVE_KEY='mamel_blueprint_v6'`、JSON `version:6` を維持して旧版自動保存・手修正との互換を保つ。
+- コード改修：`shiren_sfc_reference_viewer.html` を同じmainブランチ上書き。最新コミット `a349e78a07400fc31bdcf258bd2efd2b8b196c9f`。確認URL：<https://ninjin-man.github.io/shiren-extended/shiren_sfc_reference_viewer.html?v=64>。
+- 検証：ローカル描画ロジックで540条件（左右全色・透明度、輪郭不変、片目黒目1px、色数、lightShare変化）。独立プレビューHTMLは Chromium 320/390/430pxで4画像ロード・横はみ出しなし・pageerrorなし。**GitHub Pages本体／iPhone Safari実機での自動動作確認は未実施**。
+- 次は参照原寸PNGから色面割合のより堅牢な抽出や、耳・顔・腹のパーツマスクの解析を検討する。すでに合格に近づいた目と輪郭は無断で大幅に変えない。
