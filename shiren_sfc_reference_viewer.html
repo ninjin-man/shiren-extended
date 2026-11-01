@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ドット絵工房 v5 | マムル研究→オリジナル小獣</title>
+<title>ドット絵工房 v6 | マムル研究→オリジナル小獣</title>
 <style>
 :root{color-scheme:dark;--bg:#101722;--panel:#1b2737;--inner:#26374b;--edge:#455972;--ink:#f4f6fb;--muted:#b4c3d1;--acc:#89ded2;--gold:#f7cf79}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',sans-serif;padding:0 12px 38px}main{max-width:850px;margin:auto}
@@ -10,7 +10,7 @@ button,input,select{font:inherit}button{padding:9px 12px;min-height:42px;color:v
 .gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.cand{min-width:0;background:var(--inner);border:2px solid var(--edge);border-radius:10px;padding:9px 5px;display:flex;align-items:center;flex-direction:column;gap:5px;text-align:center}.cand.active{border-color:var(--gold);box-shadow:0 0 0 1px #f7cf7980}.cand canvas{height:126px;width:126px;max-width:100%;image-rendering:pixelated;background:repeating-conic-gradient(#304255 0 25%,#1c2c3b 0 50%) 50%/12px 12px}.cand strong{font-size:13px}.cand small{font-size:11px}
 .editor-layout{display:flex;gap:15px;flex-wrap:wrap}.editor-pane{flex:1;min-width:265px}.side-pane{flex:1;min-width:200px}.editorbox{display:flex;justify-content:center;overflow:auto;background:#0e1c2c;border:1px solid var(--edge);padding:12px;border-radius:9px}.editorframe{position:relative;width:264px;height:264px;flex:none;background:repeating-conic-gradient(#304255 0 25%,#1c2c3b 0 50%) 50%/22px 22px}.editorframe canvas{width:264px;height:264px;display:block;image-rendering:pixelated;touch-action:none}.editorframe.grid:after{content:'';position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(#ffffff18 1px,transparent 1px),linear-gradient(90deg,#ffffff18 1px,transparent 1px);background-size:11px 11px}.toolbar{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}.toolbar button{flex:1;min-width:73px;font-size:13px}.palette{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.palette button{min-width:30px;min-height:30px;width:30px;height:30px;border-radius:6px;padding:0}.palette button.active{outline:2px solid var(--gold);outline-offset:1px}.compare{display:flex;gap:15px;justify-content:center;align-items:center}.compare canvas{width:118px;height:118px;image-rendering:pixelated;background:repeating-conic-gradient(#304255 0 25%,#1c2c3b 0 50%) 50%/12px 12px}.filelike{padding:10px 12px;display:block;background:#354c61;border:1px solid #5a7185;border-radius:9px;font-size:13px;position:relative;cursor:pointer}.filelike input{position:absolute;opacity:0;width:1px;height:1px}.switch{display:flex;align-items:center;gap:7px;margin:9px 0;font-size:13px}.switch input{width:18px;height:18px;accent-color:var(--acc)}#metrics{white-space:pre-line;font-size:12px;color:var(--muted)}@media(min-width:680px){.gallery{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style></head><body><main>
-<header><div class="tag">SFC原作研究 / iPhone専用対応 / v5</div><h1>マムルから学ぶ オリジナル小獣工房</h1><p class="muted">輪郭を崩さず、原作の描き込み方を研究して別デザインを生成します。原作画素のコピー・再配置はしません。</p></header>
+<header><div class="tag">SFC原作研究 / iPhone専用対応 / v6</div><h1>マムルから学ぶ オリジナル小獣工房</h1><p class="muted">輪郭を崩さず、原作の描き込み方を研究して別デザインを生成します。今回は特に、目の位置・耳・腹・鼻口まわりの描き込みを改善します。原作画素のコピー・再配置はしません。</p></header>
 <section><h2>① マムルを参照・特徴を抽出</h2>
 <div class="refrow"><div class="refimg"><img id="refImage" alt="SFC版マムルの参考画像"></div><div><strong>基準：SFC版 マムル</strong><p class="muted">原作：16×18px。丸い小獣の形、耳・腹部・目・しっぽなどの情報の置き方を研究する。</p><a href="https://mysterydungeonwiki.com/wiki/File:Shiren_1_SFC_-_Mamel.png" target="_blank" rel="noopener">原作PNGの出典を開く</a></div></div>
 <div class="feature-grid"><div><small>参照寸法</small><strong id="sizeInfo">16×18px</strong></div><div><small>輪郭の横/縦比</small><strong id="ratioInfo">0.89（資料値）</strong></div><div><small>原作の色数</small><strong id="colorsInfo">未解析</strong></div><div><small>色と形の入力</small><strong id="sourceInfo">寸法のみ</strong></div></div>
@@ -29,7 +29,7 @@ button,input,select{font:inherit}button{padding:9px 12px;min-height:42px;color:v
 </main><script>
 'use strict';
 const $=id=>document.getElementById(id),N=24,REF_URL='https://mysterydungeonwiki.com/images/3/3b/Shiren_1_SFC_-_Mamel.png';
-const LABELS=['まる耳','葉耳','たれ耳','ふさ耳'],SAVE_KEY='mamel_blueprint_v5';
+const LABELS=['まる耳','葉耳','たれ耳','ふさ耳'],SAVE_KEY='mamel_blueprint_v6';
 const BASE={w:16,h:18,ratio:16/18,coverage:null,colors:null,hue:191,sat:0.43,source:'資料値'};
 let stats={...BASE},colorShift=0,seed=19731,candidates=[],choice=0,work=new Uint8ClampedArray(N*N*4),brush='#7bc0c8',currentTool='pen',undo=[],redo=[],drawing=false,previous=null,dirty=false,palette=[];
 const editor=$('editor'),ec=editor.getContext('2d',{willReadFrequently:true});
@@ -52,28 +52,60 @@ function outline(v,seed){const m=new Uint8Array(N*N),r=rng(seed+v*191),stretch=c
 function colors(v){const shift=[36,75,-38,110][v],hue=(stats.hue+shift+colorShift+720)%360,s=clamp(stats.sat*0.85+0.16,0.31,0.68);
  return [hex(hslRGB(hue,s*0.74,0.24)),hex(hslRGB(hue,s,0.36)),hex(hslRGB(hue,s,0.49)),hex(hslRGB(hue,s*0.72,0.62)),hex(hslRGB(hue,s*0.47,0.74)), '#F6EACD','#C2B7A2','#25364A','#FFF9E7','#ECA5A1'];}
 function make(v,seed){const m=outline(v,seed),pix=new Uint8ClampedArray(N*N*4),P=colors(v),inside=(x,y)=>x>=0&&y>=0&&x<N&&y<N&&m[y*N+x],put=(x,y,c)=>{if(inside(x,y))px(pix,x,y,c)};
+ const centerL=11,centerR=12;
  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(inside(x,y)){
-  let c=P[2];if(y<=8)c=P[3];if(x>=18&&y>=12)c=P[1];if(y>=20)c=P[1];const edge= !inside(x-1,y)||!inside(x+1,y)||!inside(x,y-1)||!inside(x,y+1);if(edge)c=(x>=17||y>=20)?P[0]:P[1];put(x,y,c);
+  let c=P[2];
+  if(y<=9&&x>=5&&x<=18)c=P[3];
+  if((x>=17&&y>=13)||(y>=20&&x>=8&&x<=15))c=P[1];
+  const edge=!inside(x-1,y)||!inside(x+1,y)||!inside(x,y-1)||!inside(x,y+1);
+  if(edge)c=(x>=17||y>=20)?P[0]:P[1];
+  put(x,y,c);
  }
- // Small, purposeful color clusters. No full-body gradient.
- for(let y=10;y<=13;y++)for(let x=5;x<=10;x++)if((x-7.7)**2/11+(y-11.5)**2/5<1)put(x,y,P[3]);
+ // compact highlight on forehead and cheek, keeping the face readable rather than heavily shaded.
+ for(let y=9;y<=12;y++)for(let x=6;x<=10;x++)if((x-8.1)**2/8+(y-10.2)**2/4<1)put(x,y,P[3]);
  for(let y=10;y<=11;y++)for(let x=6;x<=8;x++)if(inside(x,y))put(x,y,P[4]);
- // Independently designed cream chest/belly shape, not traced from reference.
- const belly=[2,4,5,6,6,5,4,3];for(let j=0;j<belly.length;j++){let y=14+j,h=belly[j];for(let x=12-h;x<=11+h;x++)if(inside(x,y))put(x,y,P[5]);}
- for(let y=19;y<=21;y++)for(let x=17;x<=20;x++)if(inside(x,y))put(x,y,P[6]);
- // Ear interiors and folds: represent material construction, not broad shadow.
- if(v!==2){for(let y=5;y<=7;y++)for(let x=6;x<=7;x++)if(inside(x,y)){put(x,y,P[4]);put(23-x,y,P[4]);}}
- else {for(let x=3;x<=5;x++)if(inside(x,7)){put(x,7,P[3]);put(23-x,7,P[3]);}}
- // Small toe marks, paired; a readable miniature face.
- for(let x of [8,15])put(x,21,P[6]);
- for(let ex of [8,14]){for(let y=11;y<=13;y++)for(let x=ex;x<ex+3;x++)put(x,y,P[7]);put(ex+1,11,P[8]);}
- put(11,15,P[7]);put(12,15,P[7]);put(10,16,P[7]);put(13,16,P[7]);put(11,17,P[9]);put(12,17,P[9]);
- // Ear-shaped detail stays symmetric; v-specific forehead and belly pattern.
- if(v===1){put(11,9,P[3]);put(12,9,P[3]);}
- if(v===2){put(7,15,P[3]);put(16,15,P[3]);}
- if(v===3){for(let x of [9,14])put(x,9,P[4]);}
+ // ear interiors and folds, mirrored from the centerline.
+ const earSets=v===2?[[4,7],[5,7],[4,8],[5,8],[6,8]]:[[6,5],[7,5],[6,6],[7,6],[6,7],[7,7],[8,7]];
+ for(const [x,y] of earSets){if(inside(x,y)){put(x,y,P[4]);put(23-x,y,P[4]);}}
+ // cream muzzle and belly, inspired by Mamel and other small-beast sprites.
+ const muzzle=[[10,14],[11,14],[12,14],[13,14],[9,15],[10,15],[11,15],[12,15],[13,15],[14,15],[10,16],[11,16],[12,16],[13,16]];
+ for(const [x,y] of muzzle)put(x,y,P[5]);
+ const belly=[1,3,4,5,5,4,3,1];
+ for(let j=0;j<belly.length;j++){let y=15+j,h=belly[j];for(let x=12-h;x<=11+h;x++)if(inside(x,y))put(x,y,P[6]);}
+ // paws and toe marks.
+ for(const [x,y] of [[7,20],[8,20],[15,20],[16,20],[8,21],[15,21]])put(x,y,P[6]);
+ for(const x of [8,11,12,15])put(x,21,P[5]);
+ // centered eyes: fixed around the face centerline, no lateral drift.
+ function eyePair(y,style=0){
+  const left=8,right=14;
+  const drawEye=(x,shineOuter=false)=>{
+    put(x,y,P[7]);put(x+1,y,P[7]);
+    put(x,y+1,P[7]);put(x+1,y+1,P[0]);
+    put(x,y+2,P[7]);put(x+1,y+2,P[7]);
+    put(shineOuter?x:x+1,y,P[8]);
+  };
+  if(style===1){ // slightly narrow / alert
+    put(left,y+1,P[7]);put(left+1,y,P[7]);put(left+1,y+1,P[0]);put(left+1,y+2,P[7]);put(left,y+2,P[7]);put(left,y,P[8]);
+    put(right+1,y+1,P[7]);put(right,y,P[7]);put(right,y+1,P[0]);put(right,y+2,P[7]);put(right+1,y+2,P[7]);put(right+1,y,P[8]);
+  }else if(style===2){ // sleepy but centered
+    for(let x=left;x<=left+1;x++)put(x,y+1,P[7]); put(left,y,P[8]); put(left+1,y+2,P[0]);
+    for(let x=right;x<=right+1;x++)put(x,y+1,P[7]); put(right+1,y,P[8]); put(right,y+2,P[0]);
+  }else{
+    drawEye(left,true); drawEye(right,false);
+  }
+ }
+ eyePair(v===2?10:11, v===1?1:(v===3?2:0));
+ // centered nose and mouth details.
+ put(centerL,14,P[7]);put(centerR,14,P[7]);
+ put(10,15,P[7]);put(13,15,P[7]);
+ put(centerL,16,P[7]);put(centerR,16,P[7]);
+ put(centerL,17,P[9]);put(centerR,17,P[9]);
+ // forehead / cheek accent differences per candidate.
+ if(v===1){put(centerL,9,P[3]);put(centerR,9,P[3]);put(7,12,P[4]);put(16,12,P[4]);}
+ if(v===2){put(7,15,P[3]);put(16,15,P[3]);put(9,13,P[4]);put(14,13,P[4]);}
+ if(v===3){put(9,9,P[4]);put(14,9,P[4]);put(7,17,P[5]);put(16,17,P[5]);}
  return {pixels:pix,mask:m,name:LABELS[v],palette:P,seed};}
-function snapshot(){return {version:5,work:Array.from(work),seed,choice,dirty,stats,colorShift}}
+function snapshot(){return {version:6,work:Array.from(work),seed,choice,dirty,stats,colorShift}}
 function store(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(snapshot()))}catch(e){}}
 function note(id,msg,warn=false){const el=$(id);el.textContent=msg;el.classList.toggle('warn',warn)}
 function metric(p){let count=0,colors=new Set(),sym=0,islands=0,visit=new Uint8Array(N*N);for(let i=0;i<N*N;i++){if(p[i*4+3]>128){count++;colors.add([p[i*4],p[i*4+1],p[i*4+2]].join(','));}}
@@ -106,8 +138,8 @@ function setTool(tool){currentTool=tool;for(const id of ['pen','eraser','fill','
 $('color').oninput=e=>setBrush(e.target.value);$('undo').onclick=()=>{if(!undo.length)return;redo.push(work.slice());work=undo.pop();dirty=true;refresh()};$('redo').onclick=()=>{if(!redo.length)return;undo.push(work.slice());work=redo.pop();dirty=true;refresh()};$('grid').onclick=()=>{const on=$('editorFrame').classList.toggle('grid');$('grid').textContent=on?'格子 OFF':'格子 ON'};
 function download(name,blob){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),12000)}
 $('savePNG').onclick=()=>editor.toBlob(b=>{if(b){download('original_small_beast_24x24.png',b);note('msg','透過PNGを書き出しました')}else note('msg','PNG保存に失敗しました',true)},'image/png');
-$('saveJSON').onclick=()=>download('original_small_beast_v5.json',new Blob([JSON.stringify(snapshot())],{type:'application/json'}));
-$('openJSON').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>35000)throw Error('ファイルが大きすぎます');const saved=JSON.parse(await file.text());if(saved.version!==5||!Array.isArray(saved.work)||saved.work.length!==N*N*4||saved.work.some(v=>!Number.isInteger(v)||v<0||v>255))throw Error('v5の編集データではありません');if(dirty&&!confirm('今の手修正を読み込んだ内容で上書きしますか？'))return;stats={...BASE,...saved.stats};colorShift=(saved.colorShift||0)%360;featuresDisplay();seed=saved.seed|0;paintCandidates(saved);note('msg','編集データを読み込みました')}catch(err){note('msg','読込失敗: '+err.message,true)}finally{e.target.value=''}};
+$('saveJSON').onclick=()=>download('original_small_beast_v6.json',new Blob([JSON.stringify(snapshot())],{type:'application/json'}));
+$('openJSON').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>35000)throw Error('ファイルが大きすぎます');const saved=JSON.parse(await file.text());if(saved.version!==6||!Array.isArray(saved.work)||saved.work.length!==N*N*4||saved.work.some(v=>!Number.isInteger(v)||v<0||v>255))throw Error('v6の編集データではありません');if(dirty&&!confirm('今の手修正を読み込んだ内容で上書きしますか？'))return;stats={...BASE,...saved.stats};colorShift=(saved.colorShift||0)%360;featuresDisplay();seed=saved.seed|0;paintCandidates(saved);note('msg','編集データを読み込みました')}catch(err){note('msg','読込失敗: '+err.message,true)}finally{e.target.value=''}};
 featuresDisplay();let saved=null;try{saved=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(saved?.version!==5||!Array.isArray(saved.work)||saved.work.length!==N*N*4)saved=null;if(saved){stats={...BASE,...saved.stats};colorShift=(saved.colorShift||0)%360;seed=saved.seed;featuresDisplay()}}catch{saved=null}
 paintCandidates(saved);
 </script></body></html>
