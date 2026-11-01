@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ドット絵工房 v6.1 | マムル研究→オリジナル小獣</title>
+<title>ドット絵工房 v6.3 | マムル研究→オリジナル小獣</title>
 <style>
 :root{color-scheme:dark;--bg:#101722;--panel:#1b2737;--inner:#26374b;--edge:#455972;--ink:#f4f6fb;--muted:#b4c3d1;--acc:#89ded2;--gold:#f7cf79}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',sans-serif;padding:0 12px 38px}main{max-width:850px;margin:auto}
@@ -103,15 +103,12 @@ function make(v,seed){
  pair(11,15,P[7]);
  pair(10,16,P[7]);
  pair(11,16,P[9]);
- // Each eye is built once on the left and reflected exactly across x=11.5.
- const eyes=[
-  ['.dd.','dwkd','dkkd','dkkd','.dd.'], // warm / round
-  ['dddd','dwkd','dkkd','.dd.','....'], // alert
-  ['.dd.','dwkd','dkkd','dwkd','.dd.'], // gentle
-  ['....','....','dddd','dkkd','.dd.']  // sleepy
- ][v];
- for(let ry=0;ry<eyes.length;ry++)for(let rx=0;rx<4;rx++){
-  const ch=eyes[ry][rx];if(ch!=='.')pair(7+rx,9+ry,P[ch==='d'?7:ch==='k'?10:8]);
+ // Smaller Mamel-inspired eyes: one black pupil pixel per side, symmetrical around x=11.5.
+ // Four rows of 4 cells: w=white, k=black pupil, d=muted edge, .=transparent face.
+ const eye=['....','.ww.','.wkd','..w.'];
+ for(let ry=0;ry<eye.length;ry++)for(let rx=0;rx<4;rx++){
+  const ch=eye[ry][rx];
+  if(ch!=='.')pair(7+rx,10+ry,P[ch==='d'?7:ch==='k'?10:8]);
  }
  // Cheek fur: short mirrored clusters rather than random isolated pixels.
  for(const [x,y,k] of [[6,14,3],[7,14,4],[7,15,3]])innerPair(x,y,P[k]);
