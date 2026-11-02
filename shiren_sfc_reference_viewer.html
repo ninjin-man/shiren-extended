@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101722"><title>ドット絵工房 v6.7 | 部位別解析＋原寸確認</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101722"><title>ドット絵工房 v6.8 | 小動物＋液体系の輪郭解析</title>
 <style>
 :root{color-scheme:dark;--bg:#101722;--panel:#1b2737;--box:#26374b;--edge:#455972;--text:#f4f6fb;--muted:#b4c3d1;--accent:#89ded2}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',sans-serif;padding:0 12px 32px}main{max-width:780px;margin:auto}h1{font-size:21px;margin:20px 0 8px}h2{font-size:17px;margin:0 0 10px}p{margin:6px 0 12px}.small,small{font-size:12px;color:var(--muted)}section{background:var(--panel);padding:14px;margin:12px 0;border:1px solid var(--edge);border-radius:13px}button,input,select{font:inherit}button{background:#354c61;border:1px solid #587087;color:var(--text);border-radius:8px;min-height:40px;padding:7px 12px;font-weight:600;cursor:pointer}button.active{border:2px solid #f7cf79}button:disabled{opacity:.4}button.primary{background:var(--accent);border-color:var(--accent);color:#11323c}.row{display:flex;flex-wrap:wrap;gap:7px;align-items:center}.row>*{flex:1 1 auto}.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.cand{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--box);min-width:0}.cand canvas{width:120px;height:120px;max-width:100%;image-rendering:pixelated;background:repeating-conic-gradient(#324658 0 25%,#213142 0 50%) 50%/16px 16px}.edit-area{display:grid;place-items:center}.editor-frame{position:relative;background:repeating-conic-gradient(#34485c 0 25%,#24384a 0 50%) 50%/20px 20px;width:240px;height:240px;max-width:100%;touch-action:none}.editor-frame canvas{display:block;width:100%;height:100%;image-rendering:pixelated;touch-action:none}.editor-frame.grid:after{content:'';position:absolute;inset:0;background:linear-gradient(to right,#ffffff3c 1px,transparent 1px) 0 0/10px 10px,linear-gradient(to bottom,#ffffff3c 1px,transparent 1px) 0 0/10px 10px;pointer-events:none}.swatch{width:30px;min-width:30px;max-width:30px;min-height:30px;height:30px;padding:0;border:1px solid #fff5}.palette{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0}.status{font-size:13px;color:var(--accent)}.hint{border-left:3px solid var(--accent);padding:8px;background:#142535;color:#c8dae2;font-size:12px}input[type=file]{display:block;max-width:100%;font-size:13px}input[type=color]{height:40px;width:58px;vertical-align:middle}a{color:var(--accent)}.actions button{flex:1 1 30%}@media(max-width:360px){.editor-frame{width:216px;height:216px}.editor-frame.grid:after{background-size:9px 9px}.cand canvas{width:112px;height:112px}}
@@ -70,17 +70,27 @@
 .native-ref-line canvas{display:block;box-sizing:content-box;width:16px;height:18px;min-width:16px;max-width:none;image-rendering:pixelated;background:none;flex:none}
 .editor-native-row{display:flex;align-items:center;justify-content:center;gap:10px;margin:10px auto 3px;font-size:12px;color:var(--muted)}
 .editor-native-row canvas{display:block;box-sizing:content-box;width:24px;height:24px;min-width:24px;image-rendering:pixelated;background:none}
-</style></head><body><main><h1>ドット絵工房 v6.7</h1>
+
+.family-switch{display:flex;gap:8px;margin:10px 0}
+.family-switch button{flex:1;min-width:0;font-size:14px}
+.family-switch button.active{background:var(--accent);color:#12323a;border-color:var(--accent)}
+.profile-panel{margin:10px 0;padding:9px;background:#172b3b;border:1px solid var(--edge);border-radius:10px;font-size:12px;color:var(--muted)}
+.profile-panel strong{display:block;font-size:13px;color:var(--text);margin-bottom:3px}
+.profile-legend{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.profile-dots{display:inline-flex;align-items:center;gap:6px}
+.profile-dots i{width:7px;height:7px;display:inline-block;background:#86d9a4;border-radius:2px}
+</style></head><body><main><h1>ドット絵工房 v6.8</h1>
 <p>原画を表示したまま、耳・目・鼻口・腹の<strong>位置、画素面積、代表色</strong>を推定。耳と口元、腹の生成に反映します。目の形・輪郭は維持します。</p>
+<section><h2>モンスターの系統</h2><div class="family-switch"><button id="familySmall" class="active" type="button">小動物（マムル型）</button><button id="familyLiquid" type="button">液体系（ミドロ型）</button></div><p id="familyNote" class="small">小動物は従来の輪郭テンプレート。液体系は原画の輪郭を読み込むと、その特徴を元に別の4案を生成します。</p></section>
 <section><h2>原画と生成した4案を比較</h2>
 <div class="compare-layout">
-<div class="ref-card"><strong>SFC マムル原画（比較資料）</strong>
+<div class="ref-card"><strong id="referenceHeading">SFC マムル原画（比較資料）</strong>
 <div class="ref-media"><img id="referenceOriginal" hidden alt="SFC版マムルの原画" src="https://mysterydungeonwiki.com/images/3/3b/Shiren_1_SFC_-_Mamel.png"><span id="referenceUnavailable" class="ref-hint">原画未取得</span></div>
-<div class="ref-info"><small>16×18px・外部参照</small><div class="native-ref-line"><span>原寸 (1×)</span><canvas id="referenceNative" width="16" height="18" aria-label="マムル原画の原寸表示"></canvas><small id="referenceSize">読込後に表示</small></div><a href="https://mysterydungeonwiki.com/wiki/File:Shiren_1_SFC_-_Mamel.png" target="_blank" rel="noopener noreferrer">原画の出典を開く</a></div>
+<div class="ref-info"><small>16×18px・外部参照</small><div class="native-ref-line"><span>原寸 (1×)</span><canvas id="referenceNative" width="16" height="18" aria-label="マムル原画の原寸表示"></canvas><small id="referenceSize">読込後に表示</small></div><a id="referenceLink" href="https://mysterydungeonwiki.com/wiki/File:Shiren_1_SFC_-_Mamel.png" target="_blank" rel="noopener noreferrer">原画の出典を開く</a></div>
 <label for="referenceFile">原画PNGを選択<input id="referenceFile" type="file" accept="image/png,image/*"></label>
-<div id="referenceText" class="ref-hint" role="status">原画が表示されない場合はPNGを選んでください。</div>
+<div id="referenceText" class="ref-hint" role="status">原画が表示されない場合はPNGを選んでください。</div><div id="liquidProfile" class="profile-panel" hidden><strong>輪郭プロファイル（参照PNGから抽出）</strong><div id="liquidProfileText">未解析</div></div>
 </div>
-<div class="candidate-area"><div class="candidates-heading">生成候補（4種類）</div>
+<div class="candidate-area"><div class="candidates-heading">生成候補（4種類）</div><p id="contourInfo" class="small">現在の輪郭：固定テンプレート＋原画比率による補正</p>
 <div id="gallery" class="gallery" aria-label="まる耳・葉耳・たれ耳・ふさ耳の4候補"><div class="cand cand-static" data-candidate="0"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABs0lEQVR42u2VP0hCURTGf0qQhPRHCGpxiRaTR6HQUva2cGjMpWhzlQJxbGiKdHKNlmiqMcgpeKmLw8N4mEtNQSQIWcsjIXgN8sR/9+oraOps957vfN8599xzL/zbTy2oZqygmrF+i3OLgk4TnpGTOU14EIm4RUGzppficRhZdkE1YxWPw8yaXhxVAHD2sjByBTKsS5bdVnQVgOtcaSCm01/Rki5HAraITRQKTHT59KrZFhaRA4zJBCpa0mWL6FVTiJFxDK1gai4kPf+Pmi4Vcf+GHGBqLsSP5sAmL14oFC+UPkznvkzEPUrmPn+E+lO6va4/pfH5IyNVImxyZGWMUGCCtV2Dt+c8zcYrSjQFgJE7YXxmnrVdg4OdSfSqSb785ewWtQJaN6fZeO3z23sycmEPPmp6hwiUCxpKNMXNfoyb/RhKNEW5oHVh7BhHc5CJPbCyrgIqRk5t7xubYQBu11viycslZ3Ngv6Yt8uFWLmjEs58D52HgETXfS47/D1GMcAIXl7et88MNAGEldh/2ju54vL9y/tgtLm9bAOPTq/R+QPHsZztrEflQgV6hXpMR/5l9A9BwvfEtRFS+AAAAAElFTkSuQmCC" width="24" height="24" alt="まる耳の生成候補"><strong>まる耳</strong></div><div class="cand cand-static" data-candidate="1"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABpklEQVR42t2UzysEYRjHPya1kohcpGzRnmhqG6W2dneU2vbgpPEnOGPtcpKkNhZ/gH/BRRQXYily2NRkT0pRcqO9bKbUOjDTzph3dsbKwXN7nx/f7/N9n/d54d+aNrJZ+41cqVnwRjWSqCC/1OuLSBvZrOWXegmk4DdNSHBSHvIN4pXb4iV9YnKM44Nrdm8XWpzXZfrqcwIROAc3szJui+2snNrIAitwKnEzr859Kwh3KZ4NPFRKniRSM+AA4S7lZ4tmgheKMoWi/C2n3u9FIvnpvGcgwb5RsM77RoGegYQvJa0iaZFEK4NKO9mkzsvjOcbrM3I6B4B+tEGou49sUic118l9qcrd+bsrjpDgs6AKgPH6/C1u+rzAhTN4qJQAGFTaAbi5OENO5zicneZwdho5nePm4syWY9b4VgDQIV2xtqcCKvqRavn11CgA0ThfRMP+FZhveipTJhpXGz7TaFxlKlMWbrTrFT0Z14F/TVGNcANjEa22tZ60unQzcw6ZxSKXd7vBP7tYRKsB9IfGmF9ts8W2l9+srkXgvj67eiKneQH/mX0AoI2xTW0CKGEAAAAASUVORK5CYII=" width="24" height="24" alt="葉耳の生成候補"><strong>葉耳</strong></div><div class="cand cand-static" data-candidate="2"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAB00lEQVR42u1VPUgCYRh+Lg4CiawwqIjD1IbgEOICIfSyKRyCltoqHBzaDNS5OW53cBBqaLAhCGqKLk8EhyMIocGfQiIDJRFCEIJryDvO7kfFocV3+u59v+953ud5j+8DRjGKYYOQFzQXlNSFfCRJDAJkdJ5UJxMOBrOtCdhcdng5SGoSswZoLihlvIeoF19Rs3whVBa1CuSNV3MbsLnseH7PI1QWkY8kCZoLSieb+10dn9yfK7WEg8HKAo168RU7Hw9d5ISZVBlg27Opa8t17l7ZY2Qt0ctXK+M09b4plkznNTYMOABYGadmPj0J1OAZ3xEyviPNHnXejGSsn85nKBa1aFb5rkWzmKHYvpSQRtJYkgJjWYRXiOOzkka7UYU7EAMAPN2eYnx6Hl4hjuPJdYitN6S/K7o4hgTp7wrQ+l23G1VNXc6ZgRvOoCmWwJKUcvBR4OEOxHAT3sNNeA/uQAyPAq80wpIUmmJpcAVcYwqrPn/HFr9Se9paAwDcdcgj0wMokP9pNbhZrPr84BpThveXrkXt3MvAt6bRGV2LCimeOACkM1WXeiHP4eDiEoUUT5he13qxvOuXAGDcs4SEg+mqhcqi0rUReE+Cv0R6Sv/9RfsBFUzP0HiFaHUAAAAASUVORK5CYII=" width="24" height="24" alt="たれ耳の生成候補"><strong>たれ耳</strong></div><div class="cand cand-static" data-candidate="3"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABwElEQVR42u2UvUsCcRjHP4pUXFEUFbVIQ02FYPZiiHpbOAQN1b/Qai9YU4NbEf4jNQRBrpcSZHEdSIMQNLQ0BEWQBxdCDXLSmb/fXQ619MDB75637/MO//TX5BMJDqcOPuz39m3G166OX2QYyyos7w67Rri8O0wsqzjAXAEAhsweBsfHXAEGx8cYMnvaK9H8UpTAbJmLPbOlTiyrULsOUTq9FJbIJ4vOTnt+KYoS6XbITL1K6fRSWn9piZoNTb3q+Nya6zmDSN+0tAf66017GXhxDhDpmxZOkHRMbefqeRj1PPxN5ytfBuL3EvlAMMG6lWv8r1s5BoIJT5kERKkFEh0okW60pMHzQwHr5ZFQKgNAOX9AZ/8oWtKgd6MfU69SK7y39iMCqBXesaffenn8Jrd5MufCHuivNwCMTt4DYBQ1QqkMZ+k1ztJrhFIZjKLm0LFtPGcA8KS8sXAyAoxQzqsNfnlxpv6Ig1GsSKfML1qurq0K4bjqOqbhuErXVkW4dC1LVLKufnz3RTbCDVydWPnY3FcbUbYiuw+5HY2ju+OfH7vViZX6seucI5ZVHLKLPbMRtci5K0AzUDPJHP8afQLyhLiPjlb42QAAAABJRU5ErkJggg==" width="24" height="24" alt="ふさ耳の生成候補"><strong>ふさ耳</strong></div></div>
 <div class="native-preview-wrap"><h3>実サイズで見る（1×）</h3><p class="native-preview-note">各キャラ24×24px。上は拡大、こちらはゲーム用の原寸表示です。</p><div id="nativeGallery" class="native-gallery"><div class="native-item" data-native="0"><img class="native-sprite" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABs0lEQVR42u2VP0hCURTGf0qQhPRHCGpxiRaTR6HQUva2cGjMpWhzlQJxbGiKdHKNlmiqMcgpeKmLw8N4mEtNQSQIWcsjIXgN8sR/9+oraOps957vfN8599xzL/zbTy2oZqygmrF+i3OLgk4TnpGTOU14EIm4RUGzppficRhZdkE1YxWPw8yaXhxVAHD2sjByBTKsS5bdVnQVgOtcaSCm01/Rki5HAraITRQKTHT59KrZFhaRA4zJBCpa0mWL6FVTiJFxDK1gai4kPf+Pmi4Vcf+GHGBqLsSP5sAmL14oFC+UPkznvkzEPUrmPn+E+lO6va4/pfH5IyNVImxyZGWMUGCCtV2Dt+c8zcYrSjQFgJE7YXxmnrVdg4OdSfSqSb785ewWtQJaN6fZeO3z23sycmEPPmp6hwiUCxpKNMXNfoyb/RhKNEW5oHVh7BhHc5CJPbCyrgIqRk5t7xubYQBu11viycslZ3Ngv6Yt8uFWLmjEs58D52HgETXfS47/D1GMcAIXl7et88MNAGEldh/2ju54vL9y/tgtLm9bAOPTq/R+QPHsZztrEflQgV6hXpMR/5l9A9BwvfEtRFS+AAAAAElFTkSuQmCC" width="24" height="24" alt="まる耳の原寸24×24px"><span class="native-name">まる耳</span></div><div class="native-item" data-native="1"><img class="native-sprite" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABpklEQVR42t2UzysEYRjHPya1kohcpGzRnmhqG6W2dneU2vbgpPEnOGPtcpKkNhZ/gH/BRRQXYily2NRkT0pRcqO9bKbUOjDTzph3dsbKwXN7nx/f7/N9n/d54d+aNrJZ+41cqVnwRjWSqCC/1OuLSBvZrOWXegmk4DdNSHBSHvIN4pXb4iV9YnKM44Nrdm8XWpzXZfrqcwIROAc3szJui+2snNrIAitwKnEzr859Kwh3KZ4NPFRKniRSM+AA4S7lZ4tmgheKMoWi/C2n3u9FIvnpvGcgwb5RsM77RoGegYQvJa0iaZFEK4NKO9mkzsvjOcbrM3I6B4B+tEGou49sUic118l9qcrd+bsrjpDgs6AKgPH6/C1u+rzAhTN4qJQAGFTaAbi5OENO5zicneZwdho5nePm4syWY9b4VgDQIV2xtqcCKvqRavn11CgA0ThfRMP+FZhveipTJhpXGz7TaFxlKlMWbrTrFT0Z14F/TVGNcANjEa22tZ60unQzcw6ZxSKXd7vBP7tYRKsB9IfGmF9ts8W2l9+srkXgvj67eiKneQH/mX0AoI2xTW0CKGEAAAAASUVORK5CYII=" width="24" height="24" alt="葉耳の原寸24×24px"><span class="native-name">葉耳</span></div><div class="native-item" data-native="2"><img class="native-sprite" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAB00lEQVR42u1VPUgCYRh+Lg4CiawwqIjD1IbgEOICIfSyKRyCltoqHBzaDNS5OW53cBBqaLAhCGqKLk8EhyMIocGfQiIDJRFCEIJryDvO7kfFocV3+u59v+953ud5j+8DRjGKYYOQFzQXlNSFfCRJDAJkdJ5UJxMOBrOtCdhcdng5SGoSswZoLihlvIeoF19Rs3whVBa1CuSNV3MbsLnseH7PI1QWkY8kCZoLSieb+10dn9yfK7WEg8HKAo168RU7Hw9d5ISZVBlg27Opa8t17l7ZY2Qt0ctXK+M09b4plkznNTYMOABYGadmPj0J1OAZ3xEyviPNHnXejGSsn85nKBa1aFb5rkWzmKHYvpSQRtJYkgJjWYRXiOOzkka7UYU7EAMAPN2eYnx6Hl4hjuPJdYitN6S/K7o4hgTp7wrQ+l23G1VNXc6ZgRvOoCmWwJKUcvBR4OEOxHAT3sNNeA/uQAyPAq80wpIUmmJpcAVcYwqrPn/HFr9Se9paAwDcdcgj0wMokP9pNbhZrPr84BpThveXrkXt3MvAt6bRGV2LCimeOACkM1WXeiHP4eDiEoUUT5he13qxvOuXAGDcs4SEg+mqhcqi0rUReE+Cv0R6Sv/9RfsBFUzP0HiFaHUAAAAASUVORK5CYII=" width="24" height="24" alt="たれ耳の原寸24×24px"><span class="native-name">たれ耳</span></div><div class="native-item" data-native="3"><img class="native-sprite" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABwElEQVR42u2UvUsCcRjHP4pUXFEUFbVIQ02FYPZiiHpbOAQN1b/Qai9YU4NbEf4jNQRBrpcSZHEdSIMQNLQ0BEWQBxdCDXLSmb/fXQ619MDB75637/MO//TX5BMJDqcOPuz39m3G166OX2QYyyos7w67Rri8O0wsqzjAXAEAhsweBsfHXAEGx8cYMnvaK9H8UpTAbJmLPbOlTiyrULsOUTq9FJbIJ4vOTnt+KYoS6XbITL1K6fRSWn9piZoNTb3q+Nya6zmDSN+0tAf66017GXhxDhDpmxZOkHRMbefqeRj1PPxN5ytfBuL3EvlAMMG6lWv8r1s5BoIJT5kERKkFEh0okW60pMHzQwHr5ZFQKgNAOX9AZ/8oWtKgd6MfU69SK7y39iMCqBXesaffenn8Jrd5MufCHuivNwCMTt4DYBQ1QqkMZ+k1ztJrhFIZjKLm0LFtPGcA8KS8sXAyAoxQzqsNfnlxpv6Ig1GsSKfML1qurq0K4bjqOqbhuErXVkW4dC1LVLKufnz3RTbCDVydWPnY3FcbUbYiuw+5HY2ju+OfH7vViZX6seucI5ZVHLKLPbMRtci5K0AzUDPJHP8afQLyhLiPjlb42QAAAABJRU5ErkJggg==" width="24" height="24" alt="ふさ耳の原寸24×24px"><span class="native-name">ふさ耳</span></div></div></div>
 <noscript><p class="small">4案は表示できますが、編集や再生成にはJavaScriptが有効なブラウザが必要です。</p></noscript>
@@ -94,13 +104,15 @@
 <div class="part-view"><figure><canvas id="partOverlay" width="16" height="18" aria-label="原画上の耳・目・鼻口・腹の推定領域"></canvas><figcaption>原画＋推定位置の重ね合わせ</figcaption></figure>
 <div class="part-results" id="partResults" aria-live="polite"><div class="part-result"><strong>耳</strong><small>原画PNGを読み込むと解析</small></div><div class="part-result"><strong>目（左右）</strong><small>未解析</small></div><div class="part-result"><strong>鼻・口</strong><small>未解析</small></div><div class="part-result"><strong>腹</strong><small>未解析</small></div></div></div>
 <p id="partNote" class="part-note">領域は色と座標による自動推定です。確定した部位認識ではなく、画素の模写・複製はしません。</p></section>
-<div class="hint">解析で検出した原画の部位位置・面積・代表色を表示。生成には耳・口元・腹の明暗と比率を控えめに反映し、好評だった目と輪郭は固定します。</div><p class="small">外部ライブラリ不要。iPhoneブラウザで拡大・原寸を比較できます。部位位置は推定値です。</p></main>
+<div class="hint">解析で検出した原画の部位位置・面積・代表色を表示。生成には耳・口元・腹の明暗と比率を控えめに反映し、好評だった目と輪郭は固定します。</div><p class="small">オフライン利用可・外部ライブラリ不要。液体の輪郭解析を追加した版です。</p></main>
 <script>
 
 'use strict';
 const N=24;
 let stats={ratio:16/18,coverage:null,hue:191,sat:.43,earShare:null,faceDarkShare:null,bellyLightShare:null},colorShift=0;
-const LABELS=['まる耳','葉耳','たれ耳','ふさ耳'];
+let archetype='small';
+let LABELS=['まる耳','葉耳','たれ耳','ふさ耳'];
+const FAMILY_LABELS={small:['まる耳','葉耳','たれ耳','ふさ耳'],liquid:['しずく型','たれ型','ひろがり型','うねり型']};
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 function rng(seed){let t=seed>>>0;return()=>{t+=0x6D2B79F5;let x=t;x=Math.imul(x^x>>>15,x|1);x^=x+Math.imul(x^x>>>7,x|61);return((x^x>>>14)>>>0)/4294967296;};}
 function hex(rgb){return '#'+rgb.map(v=>Math.round(clamp(v,0,255)).toString(16).padStart(2,'0')).join('').toUpperCase();}
@@ -115,6 +127,101 @@ function ear(mask,v){const mirror=(x,y)=>{if(x>=0&&x<12&&y>=0&&y<N){mask[y*N+x]=
  if(v===3){[[6,4],[7,4],[8,4],[5,5],[6,5],[7,5],[8,5],[5,6],[6,6],[7,6],[8,6],[6,7],[7,7],[8,7],[9,7],[7,8],[8,8]].forEach(p=>mirror(...p));}
 }
 function outline(v,seed){const m=new Uint8Array(N*N),r=rng(seed+v*191),stretch=clamp(stats.ratio/(16/18),0.86,1.13),spread=clamp(Math.round(stretch*(7.9+(r()>.5?0.28:0))+(stats.coverage==null?0:clamp((stats.coverage-0.50)*3,-0.5,0.5))),7,9);const rows=[3,4,5,6,7,8,9,9,9,9,9,8,8,7,6,4];for(let i=0;i<rows.length;i++){let half=Math.max(1,rows[i]+spread-9);polygonRow(m,7+i,12-half,11+half);}ear(m,v);return m;}
+
+// Liquid family v6.8. Reference-derived shape is represented by tiny row-span ratios,
+// never by the copyrighted pixels themselves. These ratios change the outline materially.
+const LIQUID_DEFAULT={rows:[
+ [0.44,0.57],[0.36,0.63],[0.30,0.68],[0.26,0.73],[0.25,0.75],
+ [0.22,0.77],[0.17,0.82],[0.12,0.86],[0.14,0.87],[0.18,0.83],
+ [0.15,0.89],[0.09,0.92],[0.08,0.88],[0.12,0.93],[0.13,0.91],
+ [0.08,0.94],[0.05,0.95],[0.12,0.89],[0.20,0.85]
+], source:'内蔵の液体輪郭'};
+function extractContour(data,w,h){
+ let x0=w,x1=-1,y0=h,y1=-1,count=0;
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(data[(y*w+x)*4+3]>=128){
+  count++;x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);
+ }
+ if(count<12)throw Error('輪郭の画素が不足しています');
+ const bw=x1-x0+1,bh=y1-y0+1;
+ if(count/(w*h)>.90)throw Error('背景を透過させた原寸PNGを選んでください（画像全体が不透明です）');
+ const rows=[];
+ for(let k=0;k<19;k++){
+  const yy=y0+Math.round(k*(bh-1)/18),ys=Math.max(y0,yy-1),ye=Math.min(y1,yy+1);
+  let lo=w,hi=-1;
+  for(let y=ys;y<=ye;y++)for(let x=x0;x<=x1;x++){
+   if(data[(y*w+x)*4+3]>=128){lo=Math.min(lo,x);hi=Math.max(hi,x)}
+  }
+  rows.push(hi<lo?null:[(lo-x0)/bw,(hi-x0+1)/bw]);
+ }
+ for(let i=0;i<rows.length;i++)if(!rows[i]){
+  let p=i-1,q=i+1;while(p>=0&&!rows[p])p--;while(q<rows.length&&!rows[q])q++;
+  rows[i]=p>=0?rows[p].slice():q<rows.length?rows[q].slice():[.43,.57];
+ }
+ const widths=rows.map(([l,r])=>r-l);
+ return {rows,source:'参照PNGを解析',originalSize:[bw,bh],originalBounds:[x0,y0,bw,bh],
+  topWidth:+(widths.slice(0,5).reduce((a,b)=>a+b,0)/5).toFixed(3),
+  bottomWidth:+(widths.slice(-5).reduce((a,b)=>a+b,0)/5).toFixed(3)};
+}
+function liquidOutline(v,seed){
+ const m=new Uint8Array(24*24),r=rng(seed*13+v*79+1103),ref=stats.contour?.rows?.length===19?stats.contour:LIQUID_DEFAULT;
+ const mods=[[-.5,.4,0],[-.1,0,1],[.7,.5,-1],[0,.9,1]][v];
+ for(let i=0;i<19;i++){
+  const [left,right]=ref.rows[i],width=right-left,center=(right+left)*.5;
+  // shape-specific expansion/contract + row-wave, preserve recognizable base contour proportions
+  const expand=(mods[0]+(v===2?1.2:0))*.055*Math.sin(Math.PI*i/18);
+  const wave=(Math.sin(i*(.72+v*.10)+v*1.9)+Math.sin(i*1.4+v))*(v===3?.65:.30);
+  const half=clamp(Math.round(width*9.2+expand*8+mods[1]*Math.sin(i*.55)),2,10);
+  const centerX=clamp(Math.round(11.5+(center-.5)*6+wave),8,15);
+  let y=i+4,lo=Math.max(1,centerX-half),hi=Math.min(22,centerX+half);
+  if(i<2){lo+=1;hi-=1}
+  for(let x=lo;x<=hi;x++)m[y*24+x]=1;
+ }
+ // Three distinct hanging drops, sculpted as outline rather than applying a circle silhouette.
+ const drops=[6,11,17],offs=[0,1,-1,1][v];
+ for(let d=0;d<3;d++){
+  const x=drops[d]+(d===1?offs:0),y=21+(d===1?1:0);
+  for(let yy=y;yy<=Math.min(23,y+1);yy++)for(let xx=x-1;xx<=x+1;xx++){
+   if(xx>0&&xx<23&&Math.abs(xx-x)+(yy-y)<=2)m[yy*24+xx]=1;
+  }
+ }
+ // Uneven side tendrils, below the head: no strict mirror symmetry for a fluid body.
+ for(let side=0;side<2;side++){
+  const y=12+((v+side*2)%4),x=side===0?2:21;
+  for(let q=0;q<3;q++){const xx=x+(side===0?q:-q); if(xx>=1&&xx<=22)m[(y+(q===0?0:1))*24+xx]=1}
+ }
+ return m;
+}
+function liquidColors(v){const hue=(116+[0,15,-18,30][v]+colorShift+(stats.contour&&Number.isFinite(stats.hue)?clamp(stats.hue-116,-25,25):0)+360)%360;
+ return [hex(hslRGB(hue,.58,.20)),hex(hslRGB(hue,.65,.31)),hex(hslRGB(hue,.61,.43)),hex(hslRGB(hue,.52,.57)),hex(hslRGB(hue,.38,.70)),'#F5FCE6','#E8A3A5','#233C36','#10291F','#FFFFFF','#E77586'];
+}
+function makeLiquid(v,seed){
+ const mask=liquidOutline(v,seed),pix=new Uint8ClampedArray(N*N*4),P=liquidColors(v);
+ const inside=(x,y)=>x>=0&&x<N&&y>=0&&y<N&&mask[y*N+x];
+ const edge=(x,y)=>!inside(x-1,y)||!inside(x+1,y)||!inside(x,y-1)||!inside(x,y+1);
+ const put=(x,y,c)=>{if(inside(x,y))px(pix,x,y,c)};
+ for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(inside(x,y)){
+  const wobble=Math.sin(x*1.07+y*.72+v*.9);
+  let col= y>=18?P[1]:x<=5||y>14&&x<8?P[1]:P[2];
+  if(x>=8&&x<=15&&y<=12)col=P[3];
+  if(wobble>.72&&x>=7&&y>=11&&y<18)col=P[3];
+  if(edge(x,y))col=P[0];
+  put(x,y,col);
+ }
+ // Rounded drips of reflected light, sparse deliberate clusters (not gradients).
+ for(const [x,y] of [[8,8],[9,7],[10,7],[7,11],[16,12],[6,16],[10,18],[16,19]])put(x+(v===3?1:0),y,P[3]);
+ for(const [x,y] of [[9,8],[8,9],[16,13]])put(x,y,P[4]);
+ // Expressive tall eyes and one open mouth; unlike animal eyes, fluid shapes are not mirrored rigidly.
+ for(const [x,y] of [[9,11],[9,12],[9,13],[14,10],[14,11],[14,12]])put(x,y,P[5]);
+ for(const [x,y] of [[9,13],[14,12]])put(x,y,P[8]);
+ for(let y=15;y<=17;y++)for(let x=11;x<=13;x++)if(y===16||x===12)put(x,y,P[8]);
+ put(12,17,P[10]);
+ // Lighter side droplets distinguish the four generated originals.
+ if(v===1){put(5,13,P[4]);put(17,19,P[4])}
+ if(v===2){put(7,18,P[3]);put(18,17,P[4])}
+ if(v===3){put(6,12,P[4]);put(17,14,P[4])}
+ return {pixels:pix,mask,name:LABELS[v],palette:P,seed};
+}
+
 function colors(v){
  const shift=[36,75,-38,110][v],hue=(stats.hue+shift+colorShift+720)%360,s=clamp(stats.sat*0.85+0.16,0.31,0.68);
  return [hex(hslRGB(hue,s*0.74,0.24)),hex(hslRGB(hue,s,0.36)),hex(hslRGB(hue,s,0.49)),hex(hslRGB(hue,s*0.72,0.62)),hex(hslRGB(hue,s*0.47,0.74)), '#F8EBD4','#C7AE94','#26344A','#FFFCED','#DCA4A0','#111A2B','#F0C8C0'];
@@ -200,12 +307,15 @@ function make(v,seed){
 
 
 const $=id=>document.getElementById(id);
-const SAVE_KEY='mamel_blueprint_v65';
+const SAVE_KEY='dot_art_workshop_v68';
+const REF_LINKS={small:{title:'SFC マムル原画（比較資料）',url:'https://mysterydungeonwiki.com/images/3/3b/Shiren_1_SFC_-_Mamel.png',link:'https://mysterydungeonwiki.com/wiki/File:Shiren_1_SFC_-_Mamel.png'},liquid:{title:'SFC ミドロ原画（比較資料）',url:'https://mysterydungeonwiki.com/images/0/07/Shiren_1_SFC_-_Green_Slime.png',link:'https://mysterydungeonwiki.com/wiki/Shiren:Green_Slime_Family'}};
 const editor=$('editor'),ctx=editor.getContext('2d',{willReadFrequently:true});
+let savedTypes={small:null,liquid:null},referenceURLs={small:null,liquid:null};
 let seed=19731,choice=0,candidates=[],work=new Uint8ClampedArray(24*24*4),palette=[],brush='#82c3c7',tool='pen',dirty=false,undo=[],redo=[],drawing=false,lastPixel=-1;
 function drawTo(canvas,pixels){canvas.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(pixels),24,24),0,0)}
-function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({version:65,seed,colorShift,choice,dirty,work:Array.from(work),stats}))}catch(_){}}
+function saveState(){try{savedTypes[archetype]={seed,colorShift,choice,dirty,work:Array.from(work),stats};localStorage.setItem(SAVE_KEY,JSON.stringify({version:68,archetype,savedTypes}))}catch(_){}}
 function statsText(){
+ if(archetype==='liquid')return stats.contour?.rows?'参照輪郭から再生成 / 高さ19行':'専用テンプレート輪郭（参照PNG未解析）';
  const e=Number.isFinite(stats.earShare)?Math.round(stats.earShare*100)+'%':'-';
  const f=Number.isFinite(stats.faceDarkShare)?Math.round(stats.faceDarkShare*100)+'%':'-';
  const b=Number.isFinite(stats.bellyLightShare)?Math.round(stats.bellyLightShare*100)+'%':'-';
@@ -217,13 +327,13 @@ function renderPalette(){const el=$('palette');el.replaceChildren();for(const c 
 function refresh(){drawTo(editor,work);drawTo($('editorNative'),work);let count=0,colors=new Set(),sym=0;for(let y=0;y<24;y++)for(let x=0;x<24;x++){let i=(y*24+x)*4;if(work[i+3]){count++;colors.add([...work.slice(i,i+3)].join(','));}if(x<12&&((work[i+3]>0)!==(work[(y*24+23-x)*4+3]>0)))sym++}
  $('metrics').textContent=`24×24px　${colors.size}色　描画${count}px　輪郭左右差${sym}px\n${statsText()}`; $('undo').disabled=undo.length===0;$('redo').disabled=redo.length===0; saveState()}
 function select(index,force=false){if(dirty&&!force&&!confirm('手修正を破棄して候補を切り替えますか？'))return;choice=index;work=candidates[index].pixels.slice();palette=candidates[index].palette;dirty=false;undo=[];redo=[];setBrush(palette[2]);refresh();[...$('gallery').children].forEach((e,i)=>e.classList.toggle('active',i===index));setStatus(LABELS[index]+'を選択')}
-function generate(recover=null){candidates=[0,1,2,3].map(i=>make(i,seed+i*193));$('gallery').replaceChildren();$('nativeGallery').replaceChildren();for(let i=0;i<4;i++){const e=document.createElement('button');e.type='button';e.className='cand';e.setAttribute('aria-label',LABELS[i]+'を選択');const c=document.createElement('canvas');c.width=24;c.height=24;drawTo(c,candidates[i].pixels);const span=document.createElement('strong');span.textContent=LABELS[i];e.append(c,span);e.onclick=()=>select(i);$('gallery').appendChild(e);
+function generate(recover=null){candidates=[0,1,2,3].map(i=>archetype==='liquid'?makeLiquid(i,seed+i*193):make(i,seed+i*193));$('gallery').replaceChildren();$('nativeGallery').replaceChildren();for(let i=0;i<4;i++){const e=document.createElement('button');e.type='button';e.className='cand';e.setAttribute('aria-label',LABELS[i]+'を選択');const c=document.createElement('canvas');c.width=24;c.height=24;drawTo(c,candidates[i].pixels);const span=document.createElement('strong');span.textContent=LABELS[i];e.append(c,span);e.onclick=()=>select(i);$('gallery').appendChild(e);
  const mini=document.createElement('div');mini.className='native-item';mini.dataset.native=String(i);
  const native=document.createElement('canvas');native.width=24;native.height=24;native.className='native-sprite';native.setAttribute('aria-label',LABELS[i]+'の原寸24×24px');
  drawTo(native,candidates[i].pixels);
  const name=document.createElement('span');name.className='native-name';name.textContent=LABELS[i];
  mini.append(native,name);$('nativeGallery').appendChild(mini);
- }select(recover?Math.max(0,Math.min(3,recover.choice)):0,true);if(recover&&recover.dirty&&Array.isArray(recover.work)&&recover.work.length===2304){work=new Uint8ClampedArray(recover.work);dirty=true;refresh();setStatus('前回の手修正を復元しました')}else setStatus('4案すべて生成しました。タップすると編集できます。')}
+ }select(recover?Math.max(0,Math.min(3,recover.choice)):0,true);if(recover&&recover.dirty&&Array.isArray(recover.work)&&recover.work.length===2304){work=new Uint8ClampedArray(recover.work);dirty=true;refresh();setStatus('前回の手修正を復元しました')}else setStatus((archetype==='liquid'?'液体系':'小動物')+'の4案を生成しました。タップして編集できます。')}
 function checkpoint(){undo.push(work.slice());if(undo.length>30)undo.shift();redo=[]}
 function getPoint(event){const r=editor.getBoundingClientRect();return {x:Math.floor((event.clientX-r.left)*24/r.width),y:Math.floor((event.clientY-r.top)*24/r.height)}}
 function pixelKey(p){return (p.y*24+p.x)*4}
@@ -241,10 +351,10 @@ $('grid').onclick=()=>{$('editorFrame').classList.toggle('grid');$('grid').textC
 $('regenerate').onclick=()=>{if(dirty&&!confirm('手修正を破棄して再生成しますか？'))return;seed+=197;generate()};
 $('recolor').onclick=()=>{if(dirty&&!confirm('手修正を破棄して色を変えますか？'))return;colorShift=(colorShift+17)%360;generate()};
 function download(blob,name){const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000)}
-$('savePng').onclick=()=>{const c=document.createElement('canvas');c.width=24;c.height=24;drawTo(c,work);c.toBlob(blob=>{if(blob)download(blob,'dot_art_v65_'+LABELS[choice]+'.png')},'image/png')};
-$('saveJson').onclick=()=>download(new Blob([JSON.stringify({version:65,seed,choice,dirty:true,work:Array.from(work),stats,colorShift})],{type:'application/json'}),'dot_art_v65.json');
+$('savePng').onclick=()=>{const c=document.createElement('canvas');c.width=24;c.height=24;drawTo(c,work);c.toBlob(blob=>{if(blob)download(blob,'dot_art_v68_'+archetype+'_'+LABELS[choice]+'.png')},'image/png')};
+$('saveJson').onclick=()=>download(new Blob([JSON.stringify({version:68,archetype,seed,choice,dirty:true,work:Array.from(work),stats,colorShift})],{type:'application/json'}),'dot_art_v68_'+archetype+'.json');
 $('loadJson').onclick=()=>$('jsonFile').click();
-$('jsonFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const d=JSON.parse(await file.text());if(!Array.isArray(d.work)||d.work.length!==2304||![5,6,64,65].includes(d.version))throw Error('対応していないJSON');if(dirty&&!confirm('現在の作業を上書きしますか？'))return;seed=Number.isFinite(d.seed)?d.seed:19731;stats=d.stats&&Number.isFinite(d.stats.ratio)?{...stats,...d.stats}:stats;colorShift=Number.isFinite(d.colorShift)?d.colorShift:0;generate({...d,dirty:true});setStatus('JSON読込完了')}catch(err){alert('JSON読込失敗: '+err.message)}finally{e.target.value=''}};
+$('jsonFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const d=JSON.parse(await file.text());if(!Array.isArray(d.work)||d.work.length!==2304||![5,6,64,65,68].includes(d.version))throw Error('対応していないJSON');if(dirty&&!confirm('現在の作業を上書きしますか？'))return;if(d.version===68&&d.archetype&&d.archetype!==archetype){archetype=d.archetype;LABELS=FAMILY_LABELS[archetype];updateFamilyUI()}seed=Number.isFinite(d.seed)?d.seed:19731;stats=d.stats&&Number.isFinite(d.stats.ratio)?{...stats,...d.stats}:stats;colorShift=Number.isFinite(d.colorShift)?d.colorShift:0;generate({...d,dirty:true});setStatus('JSON読込完了')}catch(err){alert('JSON読込失敗: '+err.message)}finally{e.target.value=''}};
 
 // Auto proposals are region-guided pixel classifications, NOT manually verified part masks.
 function estimateParts(data,w,h,bounds){
@@ -338,6 +448,60 @@ function extractBands(im){
    parts,width:c.width,height:c.height
  };
 }
+
+function renderLiquidContour(im,profile){
+ const canvas=$('partOverlay'),ctx=canvas.getContext('2d',{willReadFrequently:true});
+ const scale=Math.min(12,Math.max(1,Math.floor(520/Math.max(im.naturalWidth,im.naturalHeight))));
+ canvas.width=im.naturalWidth*scale;canvas.height=im.naturalHeight*scale;
+ ctx.imageSmoothingEnabled=false;ctx.drawImage(im,0,0,canvas.width,canvas.height);
+ const w=im.naturalWidth,h=im.naturalHeight;
+ ctx.strokeStyle='#84FFE1';ctx.lineWidth=Math.max(1,scale/2);
+ // Trace the measured left/right contours over the reference, not a generic bounding box.
+ const [x0,y0,bw,bh]=profile.originalBounds||[0,0,w,h];
+ for(const index of [0,1]){
+  ctx.beginPath();
+  profile.rows.forEach((pair,i)=>{
+   const yy=(y0+i*(bh-1)/18+.5)*scale;
+   const xx=(x0+pair[index]*bw)*scale;
+   if(i===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy);
+  });ctx.stroke();
+ }
+ const list=$('partResults');list.replaceChildren();
+ const item=document.createElement('div');item.className='part-result';
+ const t=document.createElement('strong');t.textContent='液体輪郭の縦方向プロファイル';
+ const d=document.createElement('small');d.textContent='高さ19段の左右端を抽出し、元の形の幅変化を生成に利用します。\n上部の平均幅 '+Math.round(profile.topWidth*100)+'% / 下部 '+Math.round(profile.bottomWidth*100)+'%';
+ item.append(t,d);list.append(item);$('partNote').textContent='蛍光色は検出した輪郭範囲の目安です。原画そのものの画素コピーはしません。';
+ $('liquidProfile').hidden=false;$('liquidProfileText').textContent='画像サイズ '+profile.originalSize.join('×')+'px / 上部 '+Math.round(profile.topWidth*100)+'% → 下部 '+Math.round(profile.bottomWidth*100)+'%';
+}
+function updateContourInfo(){
+ $('contourInfo').textContent=archetype==='liquid'?(stats.contour?.rows?'輪郭：原画PNGの19行プロファイルを使って新規生成':'輪郭：内蔵の不定形テンプレート（PNG読み込みで解析生成に切替）'):'輪郭：16行の固定パターン＋原画比率補正';
+ $('liquidProfile').hidden=archetype!=='liquid'||!stats.contour;
+ if(archetype==='liquid'&&stats.contour) $('liquidProfileText').textContent='上部幅 '+Math.round(stats.contour.topWidth*100)+'% / 下部幅 '+Math.round(stats.contour.bottomWidth*100)+'%';
+}
+function updateFamilyUI(){
+ $('familySmall').classList.toggle('active',archetype==='small');$('familyLiquid').classList.toggle('active',archetype==='liquid');
+ const ref=REF_LINKS[archetype];$('referenceHeading').textContent=ref.title;$('referenceLink').href=ref.link;
+ $('referenceOriginal').alt=ref.title;
+ $('referenceText').textContent=archetype==='liquid'?'ミドロの原寸PNGを選ぶと、輪郭を自動解析して形を反映します。原画を同梱していません。':'マムルの原寸PNGを選ぶと、部位別に解析します。';
+ const im=$('referenceOriginal'),url=referenceURLs[archetype]||ref.url;
+ im.hidden=true;$('referenceUnavailable').hidden=false;im.src=url;
+ $('referenceSize').textContent='読込後に表示';$('referenceNative').getContext('2d').clearRect(0,0,512,512);
+ $('partResults').replaceChildren();$('partOverlay').getContext('2d').clearRect(0,0,$('partOverlay').width,$('partOverlay').height);
+ $('familyNote').textContent=archetype==='liquid'?'液体は左右非対称の垂れ・突起を持つ24pxキャラ。原画輪郭をアップロードすれば、幅分布を抽出して4案を自動生成します。':'小動物は従来の設計済み輪郭と目を維持します。';
+ updateContourInfo();
+}
+function switchFamily(f){
+ if(archetype===f)return;
+ if(dirty&&!confirm('今の手修正を保存して系統を切り替えますか？（復帰すると復元できます）'))return;
+ saveState();archetype=f;LABELS=FAMILY_LABELS[f];
+ const prior=savedTypes[f];
+ seed=prior?.seed??19731;colorShift=prior?.colorShift??0;choice=prior?.choice??0;
+ stats=prior?.stats??(f==='liquid'?{ratio:1,coverage:null,hue:116,sat:.6,earShare:null,faceDarkShare:null,bellyLightShare:null}: {ratio:16/18,coverage:null,hue:191,sat:.43,earShare:null,faceDarkShare:null,bellyLightShare:null});
+ updateFamilyUI();generate(prior);saveState();
+}
+$('familySmall').onclick=()=>switchFamily('small');
+$('familyLiquid').onclick=()=>switchFamily('liquid');
+
 // Original is linked from its source, not included in the game's generated assets.
 const originalEl=$('referenceOriginal'),missingEl=$('referenceUnavailable');
 let originalObjectURL=null;
@@ -360,21 +524,38 @@ $('referenceFile').onchange=async e=>{
   await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=()=>reject(Error('画像を開けません'));im.src=url});
   if(im.naturalWidth>512||im.naturalHeight>512||im.naturalWidth<3||im.naturalHeight<3)throw Error('原寸の3〜512px画像が必要です');
   if(dirty&&!confirm('手修正を残す場合はキャンセルしてください。参照解析の結果で4案を再生成しますか？'))return;
-  const ex=extractBands(im); // Validate before swapping the displayed reference.
-  renderPartAnalysis(im,ex);
-  if(originalObjectURL)URL.revokeObjectURL(originalObjectURL);
-  originalObjectURL=url;
+  const ex=extractBands(im); // Analyze colors and shape, each family has its own interpretation.
+  if(archetype==='liquid'){
+    const cv=document.createElement('canvas');cv.width=im.naturalWidth;cv.height=im.naturalHeight;
+    const cx=cv.getContext('2d',{willReadFrequently:true});cx.drawImage(im,0,0);
+    ex.contour=extractContour(cx.getImageData(0,0,cv.width,cv.height).data,cv.width,cv.height);
+    renderLiquidContour(im,ex.contour);
+  }else renderPartAnalysis(im,ex);
+  if(originalObjectURL&&originalObjectURL!==referenceURLs.small&&originalObjectURL!==referenceURLs.liquid)URL.revokeObjectURL(originalObjectURL);
+  originalObjectURL=url;referenceURLs[archetype]=url;
   originalEl.hidden=false;missingEl.hidden=true;originalEl.src=url;
   // Persist only compact region measurements; temporary pixel masks are for visual overlay.
   const smallParts=Object.fromEntries(Object.entries(ex.parts).map(([name,part])=>[name,{
    count:part.count,bbox:part.bbox,center:part.center,mainColor:part.mainColor,coverage:part.coverage,quality:part.quality
   }]));
-  stats={...stats,...ex,parts:smallParts};seed+=23;generate();
-  $('referenceText').textContent=`解析完了: ${ex.width}×${ex.height}px / 耳帯${Math.round((ex.earShare||0)*100)}% / 顔暗色${Math.round((ex.faceDarkShare||0)*100)}% / 腹明色${Math.round((ex.bellyLightShare||0)*100)}% / 4部位の候補を表示`;
+  stats={...stats,...ex,parts:archetype==='liquid'?null:smallParts};seed+=23;generate();updateContourInfo();
+  $('referenceText').textContent=archetype==='liquid'?`輪郭抽出完了：${ex.width}×${ex.height}px / 左右端19段を分析して4案へ反映`:`解析完了: ${ex.width}×${ex.height}px / 耳帯${Math.round((ex.earShare||0)*100)}% / 顔暗色${Math.round((ex.faceDarkShare||0)*100)}% / 腹明色${Math.round((ex.bellyLightShare||0)*100)}% / 4部位の候補を表示`;
  }catch(err){$('referenceText').textContent='画像解析失敗: '+err.message;}
  finally{if(originalObjectURL!==url)URL.revokeObjectURL(url);e.target.value='';}
 };
-try{const d=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(d&&d.version===65&&d.stats&&d.work&&d.work.length===2304){seed=d.seed;stats={...stats,...d.stats};colorShift=d.colorShift||0;generate(d)}else generate()}catch(_){generate()}
+try{
+ const old=JSON.parse(localStorage.getItem('mamel_blueprint_v65')||'null');
+ const saved=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
+ if(saved?.version===68&&saved.savedTypes){
+  savedTypes=saved.savedTypes;archetype=saved.archetype==='liquid'?'liquid':'small';
+ }else if(old?.version===65&&old.stats&&Array.isArray(old.work)&&old.work.length===2304){
+  savedTypes.small={seed:old.seed,colorShift:old.colorShift,choice:old.choice,dirty:old.dirty,work:old.work,stats:old.stats};
+ }
+ LABELS=FAMILY_LABELS[archetype];const prior=savedTypes[archetype];
+ if(prior){seed=prior.seed??19731;colorShift=prior.colorShift??0;choice=prior.choice??0;stats=prior.stats??stats}
+ else if(archetype==='liquid'){stats={ratio:1,coverage:null,hue:116,sat:.6}}
+ updateFamilyUI();generate(prior);saveState();
+}catch(err){archetype='small';LABELS=FAMILY_LABELS.small;updateFamilyUI();generate()}
 // Restored part measurements remain visible even when the original image must be reselected.
 if(stats.parts){
  const labels=[['ears','耳'],['eyes','目（左右）'],['muzzle','鼻・口'],['belly','腹']];
