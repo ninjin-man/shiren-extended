@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101722"><title>ドット絵工房 v6.5.2 | 部位別ヒューリスティック解析</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101722"><title>ドット絵工房 v6.6 | 部位別ヒューリスティック解析</title>
 <style>
 :root{color-scheme:dark;--bg:#101722;--panel:#1b2737;--box:#26374b;--edge:#455972;--text:#f4f6fb;--muted:#b4c3d1;--accent:#89ded2}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',sans-serif;padding:0 12px 32px}main{max-width:780px;margin:auto}h1{font-size:21px;margin:20px 0 8px}h2{font-size:17px;margin:0 0 10px}p{margin:6px 0 12px}.small,small{font-size:12px;color:var(--muted)}section{background:var(--panel);padding:14px;margin:12px 0;border:1px solid var(--edge);border-radius:13px}button,input,select{font:inherit}button{background:#354c61;border:1px solid #587087;color:var(--text);border-radius:8px;min-height:40px;padding:7px 12px;font-weight:600;cursor:pointer}button.active{border:2px solid #f7cf79}button:disabled{opacity:.4}button.primary{background:var(--accent);border-color:var(--accent);color:#11323c}.row{display:flex;flex-wrap:wrap;gap:7px;align-items:center}.row>*{flex:1 1 auto}.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.cand{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--box);min-width:0}.cand canvas{width:120px;height:120px;max-width:100%;image-rendering:pixelated;background:repeating-conic-gradient(#324658 0 25%,#213142 0 50%) 50%/16px 16px}.edit-area{display:grid;place-items:center}.editor-frame{position:relative;background:repeating-conic-gradient(#34485c 0 25%,#24384a 0 50%) 50%/20px 20px;width:240px;height:240px;max-width:100%;touch-action:none}.editor-frame canvas{display:block;width:100%;height:100%;image-rendering:pixelated;touch-action:none}.editor-frame.grid:after{content:'';position:absolute;inset:0;background:linear-gradient(to right,#ffffff3c 1px,transparent 1px) 0 0/10px 10px,linear-gradient(to bottom,#ffffff3c 1px,transparent 1px) 0 0/10px 10px;pointer-events:none}.swatch{width:30px;min-width:30px;max-width:30px;min-height:30px;height:30px;padding:0;border:1px solid #fff5}.palette{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0}.status{font-size:13px;color:var(--accent)}.hint{border-left:3px solid var(--accent);padding:8px;background:#142535;color:#c8dae2;font-size:12px}input[type=file]{display:block;max-width:100%;font-size:13px}input[type=color]{height:40px;width:58px;vertical-align:middle}a{color:var(--accent)}.actions button{flex:1 1 30%}@media(max-width:360px){.editor-frame{width:216px;height:216px}.editor-frame.grid:after{background-size:9px 9px}.cand canvas{width:112px;height:112px}}
@@ -45,8 +45,20 @@
 @media(max-width:360px){.compare-layout{display:flex;flex-direction:column;align-items:stretch;gap:11px}.compare-layout .gallery{gap:7px}.compare-layout .cand{padding:7px 4px;min-height:126px}.ref-card{grid-template-columns:91px minmax(0,1fr)}.ref-media{width:91px}}
 @media(min-width:650px){.compare-layout{display:grid;grid-template-columns:200px minmax(0,1fr);align-items:start}.ref-card{display:flex;flex-direction:column;align-items:center;text-align:center}.ref-media{width:145px;height:145px}.ref-info{width:100%}.compare-layout .gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-</style></head><body><main><h1>ドット絵工房 v6.5.2</h1>
-<p>v6.4の目と輪郭を維持したまま、参考画像の<strong>耳帯・顔暗色・腹明色</strong>を簡易解析して、耳内側・頬/額・腹の描き込みへ反映する試作です。</p>
+
+/* v6.6 region-based reference inspection. Source image stays user-controlled. */
+.part-view{display:flex;flex-wrap:wrap;align-items:start;gap:14px}
+.part-view figure{margin:0;flex:0 0 148px;min-width:0}
+#partOverlay{display:block;width:148px;height:auto;image-rendering:pixelated;background:repeating-conic-gradient(#324658 0 25%,#213142 0 50%) 50%/16px 16px;border:1px solid var(--edge);border-radius:8px}
+.part-view figcaption{font-size:11px;color:var(--muted);margin-top:5px}
+.part-results{flex:1 1 180px;min-width:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.part-result{border:1px solid var(--edge);padding:8px;border-radius:8px;background:var(--box);min-width:0}
+.part-result strong{font-size:13px;display:block}.part-result small{display:block;font-size:11px;line-height:1.4;white-space:pre-line;overflow-wrap:anywhere}
+.part-color{display:inline-block;width:11px;height:11px;border:1px solid #fff6;border-radius:2px;margin-right:4px;vertical-align:middle}
+.part-note{font-size:12px;color:var(--muted);margin:8px 0 0}
+@media(max-width:360px){.part-view figure{flex-basis:110px}#partOverlay{width:110px}.part-results{flex-basis:165px;grid-template-columns:1fr}}
+</style></head><body><main><h1>ドット絵工房 v6.6</h1>
+<p>原画を表示したまま、耳・目・鼻口・腹の<strong>位置、画素面積、代表色</strong>を推定。耳と口元、腹の生成に反映します。目の形・輪郭は維持します。</p>
 <section><h2>原画と生成した4案を比較</h2>
 <div class="compare-layout">
 <div class="ref-card"><strong>SFC マムル原画（比較資料）</strong>
@@ -64,8 +76,11 @@
 </section>
 <section><h2>ドット編集</h2><div class="edit-area"><div id="editorFrame" class="editor-frame"><canvas id="editor" width="24" height="24" aria-label="24×24px編集キャンバス"></canvas></div></div><p id="metrics" class="small"></p><div class="row"><button data-tool="pen" class="active">ペン</button><button data-tool="eraser">消しゴム</button><button data-tool="fill">塗りつぶし</button><button data-tool="picker">スポイト</button></div><div class="row" style="margin-top:8px"><button id="undo">戻す</button><button id="redo">やり直す</button><button id="grid">格子 ON</button><label style="flex:0 0 auto">色 <input id="color" type="color" value="#82c3c7"></label></div><div id="palette" class="palette" aria-label="使用色"></div><p class="hint">指で描けます。手修正中の候補切り替えには確認が表示されます。作業内容は端末内に自動保存します。</p></section>
 <section><h2>保存・読み込み</h2><div class="row actions"><button id="savePng" class="primary">PNG保存</button><button id="saveJson">JSON保存</button><button id="loadJson">JSON読込</button></div><input id="jsonFile" type="file" accept="application/json,.json" hidden><p class="small">PNGは24×24px透過画像。JSONで後から編集を再開できます。</p></section>
-<section><h2>参考画像の解析</h2><p class="small">上の「原画を読み込み」で原寸PNGを選択すると、外部サイトに依存せず原画を横に表示し、体型と色に加えて耳帯・顔暗色・腹明色を簡易解析できます。原画そのものはHTMLファイルに同梱していません。</p></section>
-<div class="hint">上部外側帯=耳っぽさ / 中央帯=顔の暗色 / 下部中央帯=腹の明色 という簡易ルールで特徴量を抽出します。自動で部位認識しているわけではありません。</div><p class="small">オフライン利用可・外部ライブラリ不要。部位別ヒューリスティック解析のローカル試作版です。</p></main>
+<section id="regionSection"><h2>原画の部位別解析</h2><p class="small">上の「原画PNGを選択」から原寸画像を読み込むと、原画に推定領域を重ねて表示します。参考画像をHTMLに同梱せず、端末内で解析します。</p>
+<div class="part-view"><figure><canvas id="partOverlay" width="16" height="18" aria-label="原画上の耳・目・鼻口・腹の推定領域"></canvas><figcaption>原画＋推定位置の重ね合わせ</figcaption></figure>
+<div class="part-results" id="partResults" aria-live="polite"><div class="part-result"><strong>耳</strong><small>原画PNGを読み込むと解析</small></div><div class="part-result"><strong>目（左右）</strong><small>未解析</small></div><div class="part-result"><strong>鼻・口</strong><small>未解析</small></div><div class="part-result"><strong>腹</strong><small>未解析</small></div></div></div>
+<p id="partNote" class="part-note">領域は色と座標による自動推定です。確定した部位認識ではなく、画素の模写・複製はしません。</p></section>
+<div class="hint">解析で検出した原画の部位位置・面積・代表色を表示。生成には耳・口元・腹の明暗と比率を控えめに反映し、好評だった目と輪郭は固定します。</div><p class="small">オフライン利用可・外部ライブラリ不要。部位別ヒューリスティック解析のローカル試作版です。</p></main>
 <script>
 
 'use strict';
@@ -108,9 +123,15 @@ function make(v,seed){
   put(x,y,c);
  }
  // Heuristic metrics from the source reference.
- const earLift=Number.isFinite(stats.earShare)?Math.round(clamp((stats.earShare-0.06)*20,-1,1)):0;
+ const parts=stats.parts||{},srcW=stats.width||16,srcH=stats.height||18;
+ const earBase=Number.isFinite(stats.earShare)?Math.round(clamp((stats.earShare-0.06)*20,-1,1)):0;
+ const earShape=parts.ears?.bbox?Math.round(clamp((parts.ears.bbox[3]/srcH-0.34)*8,-1,1)):0;
+ const earLift=clamp(earBase+earShape,-1,1);
  const faceShade=Number.isFinite(stats.faceDarkShare)?Math.round(clamp((stats.faceDarkShare-0.22)*6,-1,1)):0;
- const bellyAdjust=Number.isFinite(stats.bellyLightShare)?Math.round(clamp((stats.bellyLightShare-0.38)*5,-1,1)):0;
+ const bellyBase=Number.isFinite(stats.bellyLightShare)?Math.round(clamp((stats.bellyLightShare-0.38)*5,-1,1)):0;
+ const bellyShape=parts.belly?.bbox?Math.round(clamp((parts.belly.bbox[2]/srcW-0.48)*3,-1,1)):0;
+ const bellyAdjust=clamp(bellyBase+bellyShape,-1,1);
+ const muzzleShape=parts.muzzle?.bbox?Math.round(clamp((parts.muzzle.bbox[2]/srcW-0.35)*5,-1,1)):0;
  // Forehead sheen: brighten or simplify according to face darkness.
  for(const [x,y] of [[11,8],[10,8],[9,9],[10,9],[11,9]])innerPair(x,y,P[3]);
  for(const [x,y] of [[10,8],[11,8]])innerPair(x,y,P[4]);
@@ -141,7 +162,8 @@ function make(v,seed){
  // Muzzle and nose area: narrower when face band is dark, softer when light.
  const muzzleRows=faceShade>0?[[14,10,13],[15,10,13],[16,9,14]]:faceShade<0?[[14,10,13],[15,9,14],[16,8,15]]:[[14,10,13],[15,9,14],[16,9,14]];
  for(const [y,lo,hi] of muzzleRows){
-  for(let x=lo;x<=hi;x++)inner(x,y,(y===16&&(x===lo||x===hi))?P[6]:P[5]);
+  const left=lo-(y===15?muzzleShape:0),right=hi+(y===15?muzzleShape:0);
+  for(let x=left;x<=right;x++)inner(x,y,(y===16&&(x===left||x===right))?P[6]:P[5]);
  }
  pair(11,14,P[7]);
  pair(11,15,faceShade>0?P[6]:P[7]);
@@ -203,6 +225,73 @@ $('savePng').onclick=()=>{const c=document.createElement('canvas');c.width=24;c.
 $('saveJson').onclick=()=>download(new Blob([JSON.stringify({version:65,seed,choice,dirty:true,work:Array.from(work),stats,colorShift})],{type:'application/json'}),'dot_art_v65.json');
 $('loadJson').onclick=()=>$('jsonFile').click();
 $('jsonFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const d=JSON.parse(await file.text());if(!Array.isArray(d.work)||d.work.length!==2304||![5,6,64,65].includes(d.version))throw Error('対応していないJSON');if(dirty&&!confirm('現在の作業を上書きしますか？'))return;seed=Number.isFinite(d.seed)?d.seed:19731;stats=d.stats&&Number.isFinite(d.stats.ratio)?{...stats,...d.stats}:stats;colorShift=Number.isFinite(d.colorShift)?d.colorShift:0;generate({...d,dirty:true});setStatus('JSON読込完了')}catch(err){alert('JSON読込失敗: '+err.message)}finally{e.target.value=''}};
+
+// Auto proposals are region-guided pixel classifications, NOT manually verified part masks.
+function estimateParts(data,w,h,bounds){
+ const total=bounds.w*bounds.h;
+ const point=(x,y)=>({x,y,r:data[(y*w+x)*4],g:data[(y*w+x)*4+1],b:data[(y*w+x)*4+2]});
+ const opaque=(x,y)=>data[(y*w+x)*4+3]>=128;
+ const xNorm=x=>(x-bounds.x+.5)/bounds.w,yNorm=y=>(y-bounds.y+.5)/bounds.h;
+ function select(test,filter){
+  const out=[];
+  for(let y=bounds.y;y<bounds.y+bounds.h;y++)for(let x=bounds.x;x<bounds.x+bounds.w;x++){
+   if(!opaque(x,y)||!test(xNorm(x),yNorm(y)))continue;
+   const q=point(x,y);q.lum=(q.r*0.299+q.g*0.587+q.b*0.114);q.spread=Math.max(q.r,q.g,q.b)-Math.min(q.r,q.g,q.b);
+   if(!filter||filter(q))out.push(q);
+  }
+  return out;
+ }
+ function measure(pixels){
+  if(!pixels.length)return {count:0,bbox:null,center:null,mainColor:null,coverage:0,pixels:[]};
+  let minX=w,minY=h,maxX=-1,maxY=-1,sx=0,sy=0;
+  const freq=new Map();
+  for(const q of pixels){minX=Math.min(minX,q.x);minY=Math.min(minY,q.y);maxX=Math.max(maxX,q.x);maxY=Math.max(maxY,q.y);sx+=q.x;sy+=q.y;const key='#'+[q.r,q.g,q.b].map(c=>Math.round(c/16)*16).map(c=>Math.min(255,c).toString(16).padStart(2,'0')).join('').toUpperCase();freq.set(key,(freq.get(key)||0)+1)}
+  const mainColor=[...freq].sort((a,b)=>b[1]-a[1])[0][0];
+  return {count:pixels.length,bbox:[minX,minY,maxX-minX+1,maxY-minY+1],center:[sx/pixels.length,sy/pixels.length],mainColor,coverage:pixels.length/Math.max(1,total),pixels:pixels.map(q=>q.y*w+q.x)};
+ }
+ // Candidate ranges are normalized to opaque bounding box, not the whole imported canvas.
+ const ear=select((x,y)=>y<=.38&&(x<=.38||x>=.62));
+ const dark=q=>q.lum<105 || (q.lum<118&&q.spread<42);
+ const leftEye=select((x,y)=>x>=.14&&x<.47&&y>=.28&&y<=.66,dark);
+ const rightEye=select((x,y)=>x>.53&&x<=.86&&y>=.28&&y<=.66,dark);
+ // In each eye ROI, choose only the darkest near-center cluster when available.
+ function pupilCandidates(list,cx){if(!list.length)return [];const low=Math.min(...list.map(p=>p.lum));return list.filter(q=>q.lum<=Math.min(110,low+18)&&Math.abs(xNorm(q.x)-cx)<.22)}
+ const eye=measure([...pupilCandidates(leftEye,.31),...pupilCandidates(rightEye,.69)]);
+ const muzzle=measure(select((x,y)=>x>=.29&&x<=.71&&y>=.47&&y<=.81,dark));
+ const belly=measure(select((x,y)=>x>=.18&&x<=.82&&y>=.55&&y<=.96,q=>q.lum>=166&&q.spread<=88));
+ const ears=measure(ear);
+ // Store only tiny summaries and candidate pixel indices for overlay; never export original pixels.
+ const result={ears,eyes:eye,muzzle,belly};
+ for(const val of Object.values(result)){val.quality=val.count<2?'要確認':val.count>=4?'候補':'少量';}
+ return result;
+}
+function renderPartAnalysis(im,result){
+ const canvas=$('partOverlay'),cw=im.naturalWidth,ch=im.naturalHeight;
+ const scale=Math.min(12,Math.max(1,Math.floor(640/Math.max(cw,ch))));
+ canvas.width=cw*scale;canvas.height=ch*scale;
+ const cx=canvas.getContext('2d',{willReadFrequently:true});cx.imageSmoothingEnabled=false;cx.clearRect(0,0,canvas.width,canvas.height);cx.drawImage(im,0,0,canvas.width,canvas.height);
+ const types=[['ears','耳','#FFC46E'],['eyes','目','#89E9FB'],['muzzle','鼻・口','#F798B7'],['belly','腹','#B0E98A']];
+ const results=$('partResults');results.replaceChildren();
+ for(const [id,title,color] of types){
+  const part=result.parts[id],item=document.createElement('div');item.className='part-result';
+  const head=document.createElement('strong');head.textContent=title;item.append(head);
+  const line=document.createElement('small');
+  if(part&&part.count&&part.bbox){
+   const [x,y,w,h]=part.bbox;
+   line.textContent=`面積 ${part.count}px / 推定範囲 ${w}×${h}px\n座標 (${x},${y}) / 代表色 ${part.mainColor}\n${part.quality}`;
+   const swatch=document.createElement('span');swatch.className='part-color';swatch.style.background=part.mainColor;head.prepend(swatch);
+   // Only translucent classification pixels are highlighted; originals are still visible.
+   cx.fillStyle=color;cx.globalAlpha=.28;
+   for(const idx of part.pixels){const px=idx%cw,py=Math.floor(idx/cw);cx.fillRect(px*scale,py*scale,scale,scale)}
+   cx.globalAlpha=1;
+   cx.strokeStyle=color;cx.lineWidth=Math.max(1,scale/5);
+   cx.strokeRect(x*scale+.7,y*scale+.7,w*scale-1.4,h*scale-1.4);
+  }else line.textContent='検出なし（原画を確認）';
+  item.append(line);results.append(item);
+ }
+ $('partNote').textContent=`原寸 ${cw}×${ch}px。彩色した部分は自動推定の候補画素です。耳・目・鼻口・腹が重なる場合があります。`;
+}
+
 function extractBands(im){
  const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(im,0,0);const data=cx.getImageData(0,0,c.width,c.height).data;
  let xx0=c.width,xx1=-1,yy0=c.height,yy1=-1,ct=0,r=0,g=0,b=0;
@@ -220,12 +309,13 @@ function extractBands(im){
  const R=r/ct,G=g/ct,B=b/ct,mx=Math.max(R,G,B),mn=Math.min(R,G,B),delta=mx-mn; let H=191;
  if(delta){if(mx===R)H=((G-B)/delta)%6;else if(mx===G)H=(B-R)/delta+2;else H=(R-G)/delta+4;H=(H*60+360)%360}
  const L=(mx+mn)/510,S=delta===0?0:(delta/255)/(1-Math.abs(2*L-1));
+ const parts=estimateParts(data,c.width,c.height,{x:xx0,y:yy0,w:xx1-xx0+1,h:yy1-yy0+1});
  return {
    ratio:(xx1-xx0+1)/(yy1-yy0+1), coverage:ct/(c.width*c.height), hue:H, sat:clamp(S,.18,.8),
    earShare:earBand?earPix/ct:null,
    faceDarkShare:faceBand?faceDark/faceBand:null,
    bellyLightShare:bellyBand?bellyLight/bellyBand:null,
-   width:c.width,height:c.height
+   parts,width:c.width,height:c.height
  };
 }
 // Original is linked from its source, not included in the game's generated assets.
@@ -244,14 +334,27 @@ $('referenceFile').onchange=async e=>{
   if(im.naturalWidth>512||im.naturalHeight>512||im.naturalWidth<3||im.naturalHeight<3)throw Error('原寸の3〜512px画像が必要です');
   if(dirty&&!confirm('手修正を残す場合はキャンセルしてください。参照解析の結果で4案を再生成しますか？'))return;
   const ex=extractBands(im); // Validate before swapping the displayed reference.
+  renderPartAnalysis(im,ex);
   if(originalObjectURL)URL.revokeObjectURL(originalObjectURL);
   originalObjectURL=url;
   originalEl.hidden=false;missingEl.hidden=true;originalEl.src=url;
-  stats={...stats,...ex};seed+=23;generate();
-  $('referenceText').textContent=`解析完了: ${ex.width}×${ex.height}px / 耳帯${Math.round((ex.earShare||0)*100)}% / 顔暗色${Math.round((ex.faceDarkShare||0)*100)}% / 腹明色${Math.round((ex.bellyLightShare||0)*100)}%`;
+  // Persist only compact region measurements; temporary pixel masks are for visual overlay.
+  const smallParts=Object.fromEntries(Object.entries(ex.parts).map(([name,part])=>[name,{
+   count:part.count,bbox:part.bbox,center:part.center,mainColor:part.mainColor,coverage:part.coverage,quality:part.quality
+  }]));
+  stats={...stats,...ex,parts:smallParts};seed+=23;generate();
+  $('referenceText').textContent=`解析完了: ${ex.width}×${ex.height}px / 耳帯${Math.round((ex.earShare||0)*100)}% / 顔暗色${Math.round((ex.faceDarkShare||0)*100)}% / 腹明色${Math.round((ex.bellyLightShare||0)*100)}% / 4部位の候補を表示`;
  }catch(err){$('referenceText').textContent='画像解析失敗: '+err.message;}
  finally{if(originalObjectURL!==url)URL.revokeObjectURL(url);e.target.value='';}
 };
 try{const d=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(d&&d.version===65&&d.stats&&d.work&&d.work.length===2304){seed=d.seed;stats={...stats,...d.stats};colorShift=d.colorShift||0;generate(d)}else generate()}catch(_){generate()}
+// Restored part measurements remain visible even when the original image must be reselected.
+if(stats.parts){
+ const labels=[['ears','耳'],['eyes','目（左右）'],['muzzle','鼻・口'],['belly','腹']];
+ const list=$('partResults');list.replaceChildren();
+ for(const [key,label] of labels){const p=stats.parts[key],item=document.createElement('div');item.className='part-result';const title=document.createElement('strong');title.textContent=label;const detail=document.createElement('small');detail.textContent=p?.bbox?`面積 ${p.count}px / 推定範囲 ${p.bbox[2]}×${p.bbox[3]}px\n座標 (${p.bbox[0]},${p.bbox[1]}) / 代表色 ${p.mainColor}`:'検出なし';item.append(title,detail);list.append(item)}
+ $('partNote').textContent='前回の解析値を復元しました。原画上の色付き推定位置を表示するには、原画PNGを再度選択してください。';
+}
+
 
 </script></body></html>
