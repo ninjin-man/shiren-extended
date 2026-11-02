@@ -1,54 +1,91 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ドット絵工房 v6.4 | マムル研究→オリジナル小獣</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101722"><title>ドット絵工房 v6.5.2 | 部位別ヒューリスティック解析</title>
 <style>
-:root{color-scheme:dark;--bg:#101722;--panel:#1b2737;--inner:#26374b;--edge:#455972;--ink:#f4f6fb;--muted:#b4c3d1;--acc:#89ded2;--gold:#f7cf79}
-*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',sans-serif;padding:0 12px 38px}main{max-width:850px;margin:auto}
-header{padding:20px 4px 8px}h1{font-size:21px;margin:3px 0 5px}h2{font-size:17px;margin:0 0 12px}p{margin:8px 0}.muted,small{color:var(--muted);font-size:12px}.tag{font-size:12px;color:var(--gold);font-weight:700}section{padding:14px;background:var(--panel);border:1px solid var(--edge);border-radius:13px;margin:12px 0}
-button,input,select{font:inherit}button{padding:9px 12px;min-height:42px;color:var(--ink);background:#354c61;border:1px solid #5a7185;border-radius:9px;cursor:pointer;font-weight:600}button:disabled{opacity:.48}button.primary{background:#89ded2;color:#0d3036;border-color:#89ded2}button.active{box-shadow:inset 0 0 0 2px var(--gold);border-color:var(--gold)}label{font-size:13px;font-weight:600}input[type=color]{width:42px;height:39px;border-radius:7px;vertical-align:middle}input[type=file]{display:block;width:100%;margin-top:7px;font-size:13px}
-.row{display:flex;flex-wrap:wrap;gap:9px;align-items:center}.row button{flex:1;min-width:110px}.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}.feature-grid>div{background:var(--inner);padding:9px 10px;border-radius:9px}.feature-grid strong{font-size:16px;display:block}.feature-grid small{display:block}.refrow{display:flex;gap:14px;align-items:center}.refimg{flex:0 0 115px;background:#142132;border-radius:9px;padding:13px 6px;min-height:132px;display:grid;place-items:center}.refimg img{width:100px;height:110px;object-fit:contain;image-rendering:pixelated}.hint{border-left:3px solid var(--acc);padding:7px 10px;background:#142535;color:var(--muted);font-size:12px;border-radius:5px}.status{font-size:13px;color:var(--acc);margin:8px 0}.status.warn{color:#ffd49a}a{color:var(--acc)}
-.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.cand{min-width:0;background:var(--inner);border:2px solid var(--edge);border-radius:10px;padding:9px 5px;display:flex;align-items:center;flex-direction:column;gap:5px;text-align:center}.cand.active{border-color:var(--gold);box-shadow:0 0 0 1px #f7cf7980}.cand canvas{height:126px;width:126px;max-width:100%;image-rendering:pixelated;background:repeating-conic-gradient(#304255 0 25%,#1c2c3b 0 50%) 50%/12px 12px}.cand strong{font-size:13px}.cand small{font-size:11px}
-.editor-layout{display:flex;gap:15px;flex-wrap:wrap}.editor-pane{flex:1;min-width:265px}.side-pane{flex:1;min-width:200px}.editorbox{display:flex;justify-content:center;overflow:auto;background:#0e1c2c;border:1px solid var(--edge);padding:12px;border-radius:9px}.editorframe{position:relative;width:264px;height:264px;flex:none;background:repeating-conic-gradient(#304255 0 25%,#1c2c3b 0 50%) 50%/22px 22px}.editorframe canvas{width:264px;height:264px;display:block;image-rendering:pixelated;touch-action:none}.editorframe.grid:after{content:'';position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(#ffffff18 1px,transparent 1px),linear-gradient(90deg,#ffffff18 1px,transparent 1px);background-size:11px 11px}.toolbar{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}.toolbar button{flex:1;min-width:73px;font-size:13px}.palette{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.palette button{min-width:30px;min-height:30px;width:30px;height:30px;border-radius:6px;padding:0}.palette button.active{outline:2px solid var(--gold);outline-offset:1px}.compare{display:flex;gap:15px;justify-content:center;align-items:center}.compare canvas{width:118px;height:118px;image-rendering:pixelated;background:repeating-conic-gradient(#304255 0 25%,#1c2c3b 0 50%) 50%/12px 12px}.filelike{padding:10px 12px;display:block;background:#354c61;border:1px solid #5a7185;border-radius:9px;font-size:13px;position:relative;cursor:pointer}.filelike input{position:absolute;opacity:0;width:1px;height:1px}.switch{display:flex;align-items:center;gap:7px;margin:9px 0;font-size:13px}.switch input{width:18px;height:18px;accent-color:var(--acc)}#metrics{white-space:pre-line;font-size:12px;color:var(--muted)}@media(min-width:680px){.gallery{grid-template-columns:repeat(4,minmax(0,1fr))}}
-</style></head><body><main>
-<header><div class="tag">SFC原作研究 / iPhone対応 / v6.4</div><h1>マムルから学ぶ オリジナル小獣工房</h1><p class="muted">輪郭を崩さず、原作の描き込み方を研究して別デザインを生成します。今回は特に、目の位置・耳・腹・鼻口まわりの描き込みを改善します。原作画素のコピー・再配置はしません。</p></header>
-<section><h2>① マムルを参照・特徴を抽出</h2>
-<div class="refrow"><div class="refimg"><img id="refImage" alt="SFC版マムルの参考画像"></div><div><strong>基準：SFC版 マムル</strong><p class="muted">原作：16×18px。丸い小獣の形、耳・腹部・目・しっぽなどの情報の置き方を研究する。</p><a href="https://mysterydungeonwiki.com/wiki/File:Shiren_1_SFC_-_Mamel.png" target="_blank" rel="noopener">原作PNGの出典を開く</a></div></div>
-<div class="feature-grid"><div><small>参照寸法</small><strong id="sizeInfo">16×18px</strong></div><div><small>輪郭の横/縦比</small><strong id="ratioInfo">0.89（資料値）</strong></div><div><small>原作の色数</small><strong id="colorsInfo">未解析</strong></div><div><small>色と形の入力</small><strong id="sourceInfo">寸法のみ</strong></div><div><small>参照画像の明色比率</small><strong id="lightInfo">未解析</strong></div></div>
-<div class="row"><button id="analyze" type="button">原作PNGを画素解析</button><button id="resetReference" type="button">基準値に戻す</button></div>
-<label class="filelike" for="refUpload">画像から特徴を抽出（iPhoneの写真・ファイル）<input id="refUpload" type="file" accept="image/png,image/webp,image/jpeg,image/gif,image/*"></label>
-<p id="refStatus" class="status">自動取得できない場合は原寸PNGを保存して取り込んでください。</p>
-<p class="hint">輪郭比率・描画面積率・色相・彩度に加え、明るい低彩度ドットの比率を腹の大きさに最大1px反映します。耳・顔などの意味づけは原作研究に基づく設計ルールで、画像認識による自動識別ではありません。</p></section>
-<section><h2>② オリジナル小獣を4案生成</h2><div class="row"><button id="generate" class="primary">✦ 4案生成</button><button id="recolor">色だけ再生成</button></div>
-<label class="switch"><input type="checkbox" id="silhouette">輪郭のみ表示（4案比較）</label>
-<div id="gallery" class="gallery"></div><p class="muted">形は「まる耳」「葉耳」「たれ耳」「ふさ耳」。左右対称の輪郭を基準とし、細部の描き込みを優先します。</p></section>
-<section><h2>③ 1px修正と透過PNG保存</h2><div class="editor-layout"><div class="editor-pane"><div class="editorbox"><div id="editorFrame" class="editorframe"><canvas id="editor" width="24" height="24" aria-label="オリジナル小獣を編集"></canvas></div></div>
-<div class="toolbar"><button id="pen" class="active">ペン</button><button id="eraser">消しゴム</button><button id="fill">塗りつぶし</button><button id="picker">スポイト</button></div><div class="toolbar"><button id="undo">戻す</button><button id="redo">やり直す</button><button id="grid">格子 ON</button></div></div>
-<div class="side-pane"><h2>原作から得た配色傾向 → 独自パレット</h2><div class="palette" id="palette"></div><label>任意の色 <input type="color" id="color" value="#7bc0c8"></label><p id="metrics"></p>
-<div class="toolbar"><button class="primary" id="savePNG">透過PNG保存</button><button id="saveJSON">編集データ保存</button></div><label class="filelike" for="openJSON">編集データを読み込む<input id="openJSON" type="file" accept=".json,application/json"></label>
-<p class="status" id="msg" role="status"></p><p class="muted">作業内容をこの端末に自動保存します。原作の画像は公開ファイルに同梱しません。</p></div></div></section>
-</main><script>
+:root{color-scheme:dark;--bg:#101722;--panel:#1b2737;--box:#26374b;--edge:#455972;--text:#f4f6fb;--muted:#b4c3d1;--accent:#89ded2}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',sans-serif;padding:0 12px 32px}main{max-width:780px;margin:auto}h1{font-size:21px;margin:20px 0 8px}h2{font-size:17px;margin:0 0 10px}p{margin:6px 0 12px}.small,small{font-size:12px;color:var(--muted)}section{background:var(--panel);padding:14px;margin:12px 0;border:1px solid var(--edge);border-radius:13px}button,input,select{font:inherit}button{background:#354c61;border:1px solid #587087;color:var(--text);border-radius:8px;min-height:40px;padding:7px 12px;font-weight:600;cursor:pointer}button.active{border:2px solid #f7cf79}button:disabled{opacity:.4}button.primary{background:var(--accent);border-color:var(--accent);color:#11323c}.row{display:flex;flex-wrap:wrap;gap:7px;align-items:center}.row>*{flex:1 1 auto}.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.cand{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--box);min-width:0}.cand canvas{width:120px;height:120px;max-width:100%;image-rendering:pixelated;background:repeating-conic-gradient(#324658 0 25%,#213142 0 50%) 50%/16px 16px}.edit-area{display:grid;place-items:center}.editor-frame{position:relative;background:repeating-conic-gradient(#34485c 0 25%,#24384a 0 50%) 50%/20px 20px;width:240px;height:240px;max-width:100%;touch-action:none}.editor-frame canvas{display:block;width:100%;height:100%;image-rendering:pixelated;touch-action:none}.editor-frame.grid:after{content:'';position:absolute;inset:0;background:linear-gradient(to right,#ffffff3c 1px,transparent 1px) 0 0/10px 10px,linear-gradient(to bottom,#ffffff3c 1px,transparent 1px) 0 0/10px 10px;pointer-events:none}.swatch{width:30px;min-width:30px;max-width:30px;min-height:30px;height:30px;padding:0;border:1px solid #fff5}.palette{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0}.status{font-size:13px;color:var(--accent)}.hint{border-left:3px solid var(--accent);padding:8px;background:#142535;color:#c8dae2;font-size:12px}input[type=file]{display:block;max-width:100%;font-size:13px}input[type=color]{height:40px;width:58px;vertical-align:middle}a{color:var(--accent)}.actions button{flex:1 1 30%}@media(max-width:360px){.editor-frame{width:216px;height:216px}.editor-frame.grid:after{background-size:9px 9px}.cand canvas{width:112px;height:112px}}
+
+
+/* v6.5.1: reference side-by-side with generated candidate sprites */
+.compare-layout{display:grid;grid-template-columns:minmax(95px,0.95fr) minmax(0,2fr);gap:9px;align-items:start}
+.ref-card{background:var(--box);border:1px solid var(--edge);border-radius:9px;padding:7px;text-align:center;min-width:0}
+.ref-card strong{font-size:13px;display:block}.ref-card small{display:block;line-height:1.45}
+.ref-media{min-height:115px;display:grid;place-items:center;background:repeating-conic-gradient(#34485c 0 25%,#24384a 0 50%) 50%/16px 16px;border-radius:5px;padding:7px;margin:7px 0}
+#referenceOriginal{width:100%;max-width:112px;height:auto;image-rendering:pixelated;object-fit:contain}
+#referenceOriginal[hidden]{display:none}
+.ref-card a{font-size:12px;overflow-wrap:anywhere}
+.ref-card label{margin-top:7px;display:block;cursor:pointer;font-size:12px;padding:7px 3px;border:1px solid var(--edge);border-radius:7px}
+.ref-card input{width:100%;min-width:0;font-size:11px}
+.ref-hint{font-size:11px;color:var(--muted);line-height:1.45;overflow-wrap:anywhere}
+.compare-layout .gallery{gap:6px}
+.compare-layout .cand{padding:4px 1px;border:1px solid var(--edge);border-radius:7px;min-width:0;font-size:12px}
+.compare-layout .cand canvas{width:100%;height:auto;max-width:120px;aspect-ratio:1;image-rendering:pixelated}
+@media(max-width:360px){.compare-layout{grid-template-columns:minmax(91px,0.95fr) minmax(0,2fr);gap:7px}.ref-card{padding:5px}.compare-layout .gallery{gap:4px}}
+
+/* v6.5.2: prioritize four legible candidate previews on iPhone. */
+.compare-layout{display:flex;flex-direction:column;align-items:stretch;gap:12px}
+.ref-card{width:100%;display:grid;grid-template-columns:98px minmax(0,1fr);grid-template-rows:auto auto auto;gap:5px 10px;text-align:left;padding:9px}
+.ref-card strong{grid-column:1/-1;font-size:14px}
+.ref-media{grid-column:1;grid-row:2/4;min-height:94px;width:98px;height:100px;margin:0;padding:6px;overflow:hidden}
+#referenceOriginal{max-width:86px;max-height:85px;width:auto;height:auto;object-fit:contain}
+.ref-info{grid-column:2;grid-row:2;min-width:0}
+.ref-info small,.ref-info a{display:block}
+.ref-info a{margin-top:2px}
+.ref-card label{grid-column:2;grid-row:3;margin:0;padding:7px 8px;text-align:center;background:#354c61;color:#f3f7fa;border:1px solid #647a90;font-weight:700}
+.ref-card label input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+#referenceText{grid-column:1/-1;font-size:11px}
+#referenceUnavailable{max-width:80px;text-align:center}
+.candidate-area{width:100%;min-width:0}
+.candidates-heading{margin:2px 0 8px;font-weight:700;font-size:15px}
+.compare-layout .gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+.compare-layout .cand{width:100%;min-height:155px;padding:10px 6px 7px;border:1px solid var(--edge);border-radius:9px;background:var(--box);font-size:14px;justify-content:center;gap:6px}
+.compare-layout .cand canvas,.compare-layout .cand img{display:block;width:100%;max-width:158px;height:auto;aspect-ratio:1;object-fit:contain;image-rendering:pixelated;background:repeating-conic-gradient(#324658 0 25%,#213142 0 50%) 50%/16px 16px}
+.compare-layout .cand.active{outline:2px solid #f7cf79;outline-offset:-2px}
+.compare-layout .cand strong{font-size:13px}
+.compare-layout .cand:focus-visible{outline:3px solid #89ded2;outline-offset:2px}
+@media(max-width:360px){.compare-layout{display:flex;flex-direction:column;align-items:stretch;gap:11px}.compare-layout .gallery{gap:7px}.compare-layout .cand{padding:7px 4px;min-height:126px}.ref-card{grid-template-columns:91px minmax(0,1fr)}.ref-media{width:91px}}
+@media(min-width:650px){.compare-layout{display:grid;grid-template-columns:200px minmax(0,1fr);align-items:start}.ref-card{display:flex;flex-direction:column;align-items:center;text-align:center}.ref-media{width:145px;height:145px}.ref-info{width:100%}.compare-layout .gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+</style></head><body><main><h1>ドット絵工房 v6.5.2</h1>
+<p>v6.4の目と輪郭を維持したまま、参考画像の<strong>耳帯・顔暗色・腹明色</strong>を簡易解析して、耳内側・頬/額・腹の描き込みへ反映する試作です。</p>
+<section><h2>原画と生成した4案を比較</h2>
+<div class="compare-layout">
+<div class="ref-card"><strong>SFC マムル原画（比較資料）</strong>
+<div class="ref-media"><img id="referenceOriginal" hidden alt="SFC版マムルの原画" src="https://mysterydungeonwiki.com/images/3/3b/Shiren_1_SFC_-_Mamel.png"><span id="referenceUnavailable" class="ref-hint">原画未取得</span></div>
+<div class="ref-info"><small>16×18px・外部参照</small><a href="https://mysterydungeonwiki.com/wiki/File:Shiren_1_SFC_-_Mamel.png" target="_blank" rel="noopener noreferrer">原画の出典を開く</a></div>
+<label for="referenceFile">原画PNGを選択<input id="referenceFile" type="file" accept="image/png,image/*"></label>
+<div id="referenceText" class="ref-hint" role="status">原画が表示されない場合はPNGを選んでください。</div>
+</div>
+<div class="candidate-area"><div class="candidates-heading">生成候補（4種類）</div>
+<div id="gallery" class="gallery" aria-label="まる耳・葉耳・たれ耳・ふさ耳の4候補"><div class="cand cand-static" data-candidate="0"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABs0lEQVR42u2VP0hCURTGf0qQhPRHCGpxiRaTR6HQUva2cGjMpWhzlQJxbGiKdHKNlmiqMcgpeKmLw8N4mEtNQSQIWcsjIXgN8sR/9+oraOps957vfN8599xzL/zbTy2oZqygmrF+i3OLgk4TnpGTOU14EIm4RUGzppficRhZdkE1YxWPw8yaXhxVAHD2sjByBTKsS5bdVnQVgOtcaSCm01/Rki5HAraITRQKTHT59KrZFhaRA4zJBCpa0mWL6FVTiJFxDK1gai4kPf+Pmi4Vcf+GHGBqLsSP5sAmL14oFC+UPkznvkzEPUrmPn+E+lO6va4/pfH5IyNVImxyZGWMUGCCtV2Dt+c8zcYrSjQFgJE7YXxmnrVdg4OdSfSqSb785ewWtQJaN6fZeO3z23sycmEPPmp6hwiUCxpKNMXNfoyb/RhKNEW5oHVh7BhHc5CJPbCyrgIqRk5t7xubYQBu11viycslZ3Ngv6Yt8uFWLmjEs58D52HgETXfS47/D1GMcAIXl7et88MNAGEldh/2ju54vL9y/tgtLm9bAOPTq/R+QPHsZztrEflQgV6hXpMR/5l9A9BwvfEtRFS+AAAAAElFTkSuQmCC" width="24" height="24" alt="まる耳の生成候補"><strong>まる耳</strong></div><div class="cand cand-static" data-candidate="1"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABpklEQVR42t2UzysEYRjHPya1kohcpGzRnmhqG6W2dneU2vbgpPEnOGPtcpKkNhZ/gH/BRRQXYily2NRkT0pRcqO9bKbUOjDTzph3dsbKwXN7nx/f7/N9n/d54d+aNrJZ+41cqVnwRjWSqCC/1OuLSBvZrOWXegmk4DdNSHBSHvIN4pXb4iV9YnKM44Nrdm8XWpzXZfrqcwIROAc3szJui+2snNrIAitwKnEzr859Kwh3KZ4NPFRKniRSM+AA4S7lZ4tmgheKMoWi/C2n3u9FIvnpvGcgwb5RsM77RoGegYQvJa0iaZFEK4NKO9mkzsvjOcbrM3I6B4B+tEGou49sUic118l9qcrd+bsrjpDgs6AKgPH6/C1u+rzAhTN4qJQAGFTaAbi5OENO5zicneZwdho5nePm4syWY9b4VgDQIV2xtqcCKvqRavn11CgA0ThfRMP+FZhveipTJhpXGz7TaFxlKlMWbrTrFT0Z14F/TVGNcANjEa22tZ60unQzcw6ZxSKXd7vBP7tYRKsB9IfGmF9ts8W2l9+srkXgvj67eiKneQH/mX0AoI2xTW0CKGEAAAAASUVORK5CYII=" width="24" height="24" alt="葉耳の生成候補"><strong>葉耳</strong></div><div class="cand cand-static" data-candidate="2"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAB00lEQVR42u1VPUgCYRh+Lg4CiawwqIjD1IbgEOICIfSyKRyCltoqHBzaDNS5OW53cBBqaLAhCGqKLk8EhyMIocGfQiIDJRFCEIJryDvO7kfFocV3+u59v+953ud5j+8DRjGKYYOQFzQXlNSFfCRJDAJkdJ5UJxMOBrOtCdhcdng5SGoSswZoLihlvIeoF19Rs3whVBa1CuSNV3MbsLnseH7PI1QWkY8kCZoLSieb+10dn9yfK7WEg8HKAo168RU7Hw9d5ISZVBlg27Opa8t17l7ZY2Qt0ctXK+M09b4plkznNTYMOABYGadmPj0J1OAZ3xEyviPNHnXejGSsn85nKBa1aFb5rkWzmKHYvpSQRtJYkgJjWYRXiOOzkka7UYU7EAMAPN2eYnx6Hl4hjuPJdYitN6S/K7o4hgTp7wrQ+l23G1VNXc6ZgRvOoCmWwJKUcvBR4OEOxHAT3sNNeA/uQAyPAq80wpIUmmJpcAVcYwqrPn/HFr9Se9paAwDcdcgj0wMokP9pNbhZrPr84BpThveXrkXt3MvAt6bRGV2LCimeOACkM1WXeiHP4eDiEoUUT5he13qxvOuXAGDcs4SEg+mqhcqi0rUReE+Cv0R6Sv/9RfsBFUzP0HiFaHUAAAAASUVORK5CYII=" width="24" height="24" alt="たれ耳の生成候補"><strong>たれ耳</strong></div><div class="cand cand-static" data-candidate="3"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABwElEQVR42u2UvUsCcRjHP4pUXFEUFbVIQ02FYPZiiHpbOAQN1b/Qai9YU4NbEf4jNQRBrpcSZHEdSIMQNLQ0BEWQBxdCDXLSmb/fXQ619MDB75637/MO//TX5BMJDqcOPuz39m3G166OX2QYyyos7w67Rri8O0wsqzjAXAEAhsweBsfHXAEGx8cYMnvaK9H8UpTAbJmLPbOlTiyrULsOUTq9FJbIJ4vOTnt+KYoS6XbITL1K6fRSWn9piZoNTb3q+Nya6zmDSN+0tAf66017GXhxDhDpmxZOkHRMbefqeRj1PPxN5ytfBuL3EvlAMMG6lWv8r1s5BoIJT5kERKkFEh0okW60pMHzQwHr5ZFQKgNAOX9AZ/8oWtKgd6MfU69SK7y39iMCqBXesaffenn8Jrd5MufCHuivNwCMTt4DYBQ1QqkMZ+k1ztJrhFIZjKLm0LFtPGcA8KS8sXAyAoxQzqsNfnlxpv6Ig1GsSKfML1qurq0K4bjqOqbhuErXVkW4dC1LVLKufnz3RTbCDVydWPnY3FcbUbYiuw+5HY2ju+OfH7vViZX6seucI5ZVHLKLPbMRtci5K0AzUDPJHP8afQLyhLiPjlb42QAAAABJRU5ErkJggg==" width="24" height="24" alt="ふさ耳の生成候補"><strong>ふさ耳</strong></div></div>
+<noscript><p class="small">4案は表示できますが、編集や再生成にはJavaScriptが有効なブラウザが必要です。</p></noscript>
+</div></div>
+<div class="row" style="margin-top:10px"><button id="regenerate" type="button">4案再生成</button><button id="recolor" type="button">色だけ変更</button></div>
+<p id="status" class="status" role="status">4案を表示中（操作するにはSafariなどで開いてください）</p>
+</section>
+<section><h2>ドット編集</h2><div class="edit-area"><div id="editorFrame" class="editor-frame"><canvas id="editor" width="24" height="24" aria-label="24×24px編集キャンバス"></canvas></div></div><p id="metrics" class="small"></p><div class="row"><button data-tool="pen" class="active">ペン</button><button data-tool="eraser">消しゴム</button><button data-tool="fill">塗りつぶし</button><button data-tool="picker">スポイト</button></div><div class="row" style="margin-top:8px"><button id="undo">戻す</button><button id="redo">やり直す</button><button id="grid">格子 ON</button><label style="flex:0 0 auto">色 <input id="color" type="color" value="#82c3c7"></label></div><div id="palette" class="palette" aria-label="使用色"></div><p class="hint">指で描けます。手修正中の候補切り替えには確認が表示されます。作業内容は端末内に自動保存します。</p></section>
+<section><h2>保存・読み込み</h2><div class="row actions"><button id="savePng" class="primary">PNG保存</button><button id="saveJson">JSON保存</button><button id="loadJson">JSON読込</button></div><input id="jsonFile" type="file" accept="application/json,.json" hidden><p class="small">PNGは24×24px透過画像。JSONで後から編集を再開できます。</p></section>
+<section><h2>参考画像の解析</h2><p class="small">上の「原画を読み込み」で原寸PNGを選択すると、外部サイトに依存せず原画を横に表示し、体型と色に加えて耳帯・顔暗色・腹明色を簡易解析できます。原画そのものはHTMLファイルに同梱していません。</p></section>
+<div class="hint">上部外側帯=耳っぽさ / 中央帯=顔の暗色 / 下部中央帯=腹の明色 という簡易ルールで特徴量を抽出します。自動で部位認識しているわけではありません。</div><p class="small">オフライン利用可・外部ライブラリ不要。部位別ヒューリスティック解析のローカル試作版です。</p></main>
+<script>
+
 'use strict';
-const $=id=>document.getElementById(id),N=24,REF_URL='https://mysterydungeonwiki.com/images/3/3b/Shiren_1_SFC_-_Mamel.png';
-const LABELS=['まる耳','葉耳','たれ耳','ふさ耳'],SAVE_KEY='mamel_blueprint_v6';
-const BASE={w:16,h:18,ratio:16/18,coverage:null,lightShare:null,colors:null,hue:191,sat:0.43,source:'資料値'};
-let stats={...BASE},colorShift=0,seed=19731,candidates=[],choice=0,work=new Uint8ClampedArray(N*N*4),brush='#7bc0c8',currentTool='pen',undo=[],redo=[],drawing=false,previous=null,dirty=false,palette=[];
-const editor=$('editor'),ec=editor.getContext('2d',{willReadFrequently:true});
-$('refImage').src=REF_URL;
-function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+const N=24;
+let stats={ratio:16/18,coverage:null,hue:191,sat:.43,earShare:null,faceDarkShare:null,bellyLightShare:null},colorShift=0;
+const LABELS=['まる耳','葉耳','たれ耳','ふさ耳'];
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 function rng(seed){let t=seed>>>0;return()=>{t+=0x6D2B79F5;let x=t;x=Math.imul(x^x>>>15,x|1);x^=x+Math.imul(x^x>>>7,x|61);return((x^x>>>14)>>>0)/4294967296;};}
-function hex(rgb){return '#'+rgb.map(v=>Math.round(clamp(v,0,255)).toString(16).padStart(2,'0')).join('').toUpperCase()}
-function rgb(str){return [1,3,5].map(i=>parseInt(str.slice(i,i+2),16))}
-function hsl(rgb){const v=rgb.map(x=>x/255),hi=Math.max(...v),lo=Math.min(...v),d=hi-lo;let h=0,s=0,l=(hi+lo)/2;if(d){s=d/(1-Math.abs(2*l-1));switch(hi){case v[0]:h=((v[1]-v[2])/d)%6;break;case v[1]:h=(v[2]-v[0])/d+2;break;default:h=(v[0]-v[1])/d+4;}h=(h*60+360)%360;}return [h,s,l]}
-function hslRGB(h,s,l){h=((h%360)+360)%360;s=clamp(s,0,1);l=clamp(l,0,1);const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;let a=h<60?[c,x,0]:h<120?[x,c,0]:h<180?[0,c,x]:h<240?[0,x,c]:h<300?[x,0,c]:[c,0,x];return a.map(z=>Math.round((z+m)*255))}
-function px(img,x,y,color){if(x<0||y<0||x>=N||y>=N)return;const p=(y*N+x)*4,a=Array.isArray(color)?color:rgb(color);img[p]=a[0];img[p+1]=a[1];img[p+2]=a[2];img[p+3]=255}
-function polygonRow(mask,y,l,r){if(y<0||y>=N)return;for(let x=l;x<=r;x++){if(x>=0&&x<N)mask[y*N+x]=1}}
-function ear(mask,v){const mirror=(x,y)=>{if(x>=0&&x<12&&y>=0&&y<N){mask[y*N+x]=1;mask[y*N+(23-x)]=1}};
- if(v===0){[[6,3],[7,3],[5,4],[6,4],[7,4],[5,5],[6,5],[7,5],[8,5],[5,6],[6,6],[7,6],[8,6],[6,7],[7,7],[8,7],[9,7],[7,8],[8,8]].forEach(p=>mirror(...p))}
- if(v===1){[[6,2],[5,3],[6,3],[5,4],[6,4],[7,4],[5,5],[6,5],[7,5],[5,6],[6,6],[7,6],[8,6],[6,7],[7,7],[8,7],[7,8],[8,8]].forEach(p=>mirror(...p))}
- if(v===2){[[2,6],[3,6],[4,6],[5,6],[2,7],[3,7],[4,7],[5,7],[6,7],[3,8],[4,8],[5,8],[6,8],[7,8],[4,9],[5,9],[6,9]].forEach(p=>mirror(...p))}
- if(v===3){[[6,4],[7,4],[8,4],[5,5],[6,5],[7,5],[8,5],[5,6],[6,6],[7,6],[8,6],[6,7],[7,7],[8,7],[9,7],[7,8],[8,8]].forEach(p=>mirror(...p))}
+function hex(rgb){return '#'+rgb.map(v=>Math.round(clamp(v,0,255)).toString(16).padStart(2,'0')).join('').toUpperCase();}
+function rgb(str){return [1,3,5].map(i=>parseInt(str.slice(i,i+2),16));}
+function hslRGB(h,s,l){h=((h%360)+360)%360;s=clamp(s,0,1);l=clamp(l,0,1);const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;let a=h<60?[c,x,0]:h<120?[x,c,0]:h<180?[0,c,x]:h<240?[0,x,c]:h<300?[x,0,c]:[c,0,x];return a.map(z=>Math.round((z+m)*255));}
+function px(img,x,y,color){if(x<0||y<0||x>=N||y>=N)return;const p=(y*N+x)*4,a=Array.isArray(color)?color:rgb(color);img[p]=a[0];img[p+1]=a[1];img[p+2]=a[2];img[p+3]=255;}
+function polygonRow(mask,y,l,r){if(y<0||y>=N)return;for(let x=l;x<=r;x++){if(x>=0&&x<N)mask[y*N+x]=1;}}
+function ear(mask,v){const mirror=(x,y)=>{if(x>=0&&x<12&&y>=0&&y<N){mask[y*N+x]=1;mask[y*N+(23-x)]=1;}};
+ if(v===0){[[6,3],[7,3],[5,4],[6,4],[7,4],[5,5],[6,5],[7,5],[8,5],[5,6],[6,6],[7,6],[8,6],[6,7],[7,7],[8,7],[9,7],[7,8],[8,8]].forEach(p=>mirror(...p));}
+ if(v===1){[[6,2],[5,3],[6,3],[5,4],[6,4],[7,4],[5,5],[6,5],[7,5],[5,6],[6,6],[7,6],[6,7],[7,7],[8,7],[7,8],[8,8]].forEach(p=>mirror(...p));}
+ if(v===2){[[2,6],[3,6],[4,6],[5,6],[2,7],[3,7],[4,7],[5,7],[6,7],[3,8],[4,8],[5,8],[6,8],[7,8],[4,9],[5,9],[6,9]].forEach(p=>mirror(...p));}
+ if(v===3){[[6,4],[7,4],[8,4],[5,5],[6,5],[7,5],[8,5],[5,6],[6,6],[7,6],[8,6],[6,7],[7,7],[8,7],[9,7],[7,8],[8,8]].forEach(p=>mirror(...p));}
 }
-function outline(v,seed){const m=new Uint8Array(N*N),r=rng(seed+v*191),stretch=clamp(stats.ratio/(16/18),0.86,1.13),spread=clamp(Math.round(stretch*(7.9+(r()>.5?0.28:0))+(stats.coverage==null?0:clamp((stats.coverage-0.50)*3,-0.5,0.5))),7,9);const rows=[3,4,5,6,7,8,9,9,9,9,9,8,8,7,6,4];for(let i=0;i<rows.length;i++){let half=Math.max(1,rows[i]+spread-9);polygonRow(m,7+i,12-half,11+half)} ear(m,v);return m}
+function outline(v,seed){const m=new Uint8Array(N*N),r=rng(seed+v*191),stretch=clamp(stats.ratio/(16/18),0.86,1.13),spread=clamp(Math.round(stretch*(7.9+(r()>.5?0.28:0))+(stats.coverage==null?0:clamp((stats.coverage-0.50)*3,-0.5,0.5))),7,9);const rows=[3,4,5,6,7,8,9,9,9,9,9,8,8,7,6,4];for(let i=0;i<rows.length;i++){let half=Math.max(1,rows[i]+spread-9);polygonRow(m,7+i,12-half,11+half);}ear(m,v);return m;}
 function colors(v){
  const shift=[36,75,-38,110][v],hue=(stats.hue+shift+colorShift+720)%360,s=clamp(stats.sat*0.85+0.16,0.31,0.68);
  return [hex(hslRGB(hue,s*0.74,0.24)),hex(hslRGB(hue,s,0.36)),hex(hslRGB(hue,s,0.49)),hex(hslRGB(hue,s*0.72,0.62)),hex(hslRGB(hue,s*0.47,0.74)), '#F8EBD4','#C7AE94','#26344A','#FFFCED','#DCA4A0','#111A2B','#F0C8C0'];
@@ -61,7 +98,7 @@ function make(v,seed){
  const pair=(x,y,c)=>{put(x,y,c);put(23-x,y,c)};
  const inner=(x,y,c)=>{if(inside(x,y)&&!border(x,y))put(x,y,c)};
  const innerPair=(x,y,c)=>{inner(x,y,c);inner(23-x,y,c)};
- // Full-mask color pass; silhouette and its 1px rim remain unchanged from v6.
+ // Base fill; silhouette remains unchanged from v6.4.
  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(inside(x,y)){
   let c=P[2];
   if(y<=9&&x>=5&&x<=18)c=P[3];
@@ -70,25 +107,30 @@ function make(v,seed){
   if(border(x,y))c=(y>=19)?P[0]:P[1];
   put(x,y,c);
  }
- // Forehead sheen follows the dome, rather than a large amorphous highlight.
+ // Heuristic metrics from the source reference.
+ const earLift=Number.isFinite(stats.earShare)?Math.round(clamp((stats.earShare-0.06)*20,-1,1)):0;
+ const faceShade=Number.isFinite(stats.faceDarkShare)?Math.round(clamp((stats.faceDarkShare-0.22)*6,-1,1)):0;
+ const bellyAdjust=Number.isFinite(stats.bellyLightShare)?Math.round(clamp((stats.bellyLightShare-0.38)*5,-1,1)):0;
+ // Forehead sheen: brighten or simplify according to face darkness.
  for(const [x,y] of [[11,8],[10,8],[9,9],[10,9],[11,9]])innerPair(x,y,P[3]);
  for(const [x,y] of [[10,8],[11,8]])innerPair(x,y,P[4]);
- // Ear inset shapes are tailored to each existing silhouette.
+ if(faceShade<0){ innerPair(9,8,P[4]); }
+ if(faceShade>0){ innerPair(9,9,P[2]); }
+ // Ear inset shapes stay per silhouette, but can rise/fall by 1px via earLift.
+ const shiftMarks=(arr)=>arr.map(([x,y,k])=>[x,y+earLift,k]);
  const earMarks=[
   [[6,4,6],[7,4,9],[6,5,9],[7,5,11],[7,6,11],[8,6,6],[8,7,3]],
   [[6,3,6],[6,4,9],[7,4,11],[6,5,9],[7,5,11],[7,6,6],[8,7,3]],
   [[3,7,6],[4,7,9],[5,7,11],[4,8,9],[5,8,11],[6,8,6],[6,9,3]],
   [[6,5,6],[7,5,9],[6,6,9],[7,6,11],[8,6,11],[8,7,6],[9,8,3]]
- ];
+ ].map(shiftMarks);
  for(const [x,y,k] of earMarks[v])innerPair(x,y,P[k]);
- // A compact V-shaped inner-ear fold provides depth without a thick shadow band.
- for(const [x,y] of (v===2?[[6,9]]:[[8,8]]))innerPair(x,y,P[1]);
- // The light belly is a connected curved patch with a narrow muted seam.
- // Light low-saturation pixel share informs belly breadth (+/-1px), not semantic part recognition.
- const lightAdjust=Number.isFinite(stats.lightShare)?Math.round(clamp((stats.lightShare-0.3)*4,-1,1)):0;
+ for(const [x,y] of (v===2?[[6,9+earLift]]:[[8,8+earLift]]))innerPair(x,y,P[1]);
+ if(earLift<0) innerPair(v===2?5:8, v===2?7:7, P[4]);
+ // Belly patch now listens to lower-center lightness from the reference image.
  const belly=[2,3,5,6,6,5,4,2];
  for(let i=0;i<belly.length;i++){
-  const y=15+i,half=belly[i]+(i>=2&&i<=5?lightAdjust:0);
+  const y=15+i,half=belly[i]+(i>=2&&i<=5?bellyAdjust:0);
   for(let x=12-half;x<=11+half;x++){
    if(!inside(x,y)||border(x,y))continue;
    const seam=(x===12-half||x===11+half);
@@ -96,66 +138,120 @@ function make(v,seed){
    inner(x,y,seam||footShade?P[6]:P[5]);
   }
  }
- // Tapered muzzle bridges the forehead and belly; no flat rectangular mask.
- for(const [y,lo,hi] of [[14,10,13],[15,9,14],[16,9,14]]){
+ // Muzzle and nose area: narrower when face band is dark, softer when light.
+ const muzzleRows=faceShade>0?[[14,10,13],[15,10,13],[16,9,14]]:faceShade<0?[[14,10,13],[15,9,14],[16,8,15]]:[[14,10,13],[15,9,14],[16,9,14]];
+ for(const [y,lo,hi] of muzzleRows){
   for(let x=lo;x<=hi;x++)inner(x,y,(y===16&&(x===lo||x===hi))?P[6]:P[5]);
  }
- // Centered nose and a small upturned mouth, separate from the belly seam.
  pair(11,14,P[7]);
- pair(11,15,P[6]);
+ pair(11,15,faceShade>0?P[6]:P[7]);
  pair(10,16,P[7]);
  pair(11,16,P[9]);
- // Balanced face: both eyes lowered 1px; exactly one black pupil per eye around x=11.5.
- // Four rows of 4 cells: w=white, k=black pupil, d=muted edge, .=transparent face.
+ // Eyes fixed from v6.4 baseline.
  const eye=['....','.ww.','.wkd','..w.'];
  for(let ry=0;ry<eye.length;ry++)for(let rx=0;rx<4;rx++){
-  const ch=eye[ry][rx];
-  if(ch!=='.')pair(7+rx,11+ry,P[ch==='d'?7:ch==='k'?10:8]);
+  const ch=eye[ry][rx];if(ch!=='.')pair(7+rx,11+ry,P[ch==='d'?7:ch==='k'?10:8]);
  }
- // Cheek fur: short mirrored clusters rather than random isolated pixels.
- for(const [x,y,k] of [[6,14,3],[7,14,4],[7,15,3]])innerPair(x,y,P[k]);
+ // Cheek fur reacts slightly to face darkness.
+ const cheek=faceShade>0?[[6,14,3],[7,14,3],[7,15,2]]:faceShade<0?[[6,14,4],[7,14,4],[7,15,3],[6,15,3]]:[[6,14,3],[7,14,4],[7,15,3]];
+ for(const [x,y,k] of cheek)innerPair(x,y,P[k]);
  if(v===1)innerPair(7,16,P[4]);
  if(v===2)innerPair(6,16,P[3]);
  if(v===3)innerPair(7,16,P[9]);
- // Two actual paws break the base of the belly and give it physical support.
  for(const [x,y,k] of [[7,20,6],[8,20,6],[7,21,5],[8,21,5],[9,21,1],[9,22,6]])innerPair(x,y,P[k]);
  return {pixels:pix,mask:m,name:LABELS[v],palette:P,seed};
 }
-function snapshot(){return {version:6,work:Array.from(work),seed,choice,dirty,stats,colorShift}}
-function store(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(snapshot()))}catch(e){}}
-function note(id,msg,warn=false){const el=$(id);el.textContent=msg;el.classList.toggle('warn',warn)}
-function metric(p){let count=0,colors=new Set(),sym=0,islands=0,visit=new Uint8Array(N*N);for(let i=0;i<N*N;i++){if(p[i*4+3]>128){count++;colors.add([p[i*4],p[i*4+1],p[i*4+2]].join(','));}}
- for(let y=0;y<N;y++)for(let x=0;x<12;x++)if((p[(y*N+x)*4+3]>128)!==(p[(y*N+(23-x))*4+3]>128))sym++;
- for(let i=0;i<N*N;i++)if(p[i*4+3]>128&&!visit[i]){islands++;const q=[i];visit[i]=1;while(q.length){let k=q.pop(),x=k%N,y=(k-x)/N;for(let u of [x>0?k-1:-1,x<23?k+1:-1,y>0?k-24:-1,y<23?k+24:-1])if(u>=0&&p[u*4+3]>128&&!visit[u]){visit[u]=1;q.push(u)}}}
- return {count,colors:colors.size,sym,islands};}
-function render(canvas,pixels){const ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.putImageData(new ImageData(new Uint8ClampedArray(pixels),N,N),0,0)}
-function preview(c,s){if(!$('silhouette').checked){render(c,s.pixels);return}const m=new Uint8ClampedArray(N*N*4);for(let i=0;i<N*N;i++)if(s.mask[i]){m[i*4]=225;m[i*4+1]=237;m[i*4+2]=226;m[i*4+3]=255}render(c,m)}
-function refresh(){render(editor,work);const met=metric(work);$('metrics').textContent=`24×24px　${met.colors}色　描画 ${met.count}px\n輪郭左右差 ${met.sym}px / 塊 ${met.islands}個`+(met.sym?'\n⚠ 手修正で左右差が出ています':'');$('undo').disabled=!undo.length;$('redo').disabled=!redo.length;store()}
-function setBrush(v){brush=v.toUpperCase();$('color').value=brush;$('palette').replaceChildren();palette.forEach(c=>{let b=document.createElement('button');b.type='button';b.title=c;b.style.background=c;b.setAttribute('aria-label',c);b.classList.toggle('active',c.toUpperCase()===brush);b.onclick=()=>setBrush(c);$('palette').append(b)})}
-function select(i,force=false){if(dirty&&!force&&!confirm('手修正を破棄して候補を切り替えますか？'))return;choice=i;work=candidates[i].pixels.slice();dirty=false;undo=[];redo=[];palette=candidates[i].palette;setBrush(palette[2]);refresh();[...$('gallery').children].forEach((c,j)=>c.classList.toggle('active',j===i));note('msg',LABELS[i]+'を選択しました。')}
-function paintCandidates(recover=null){$('gallery').replaceChildren();candidates=[0,1,2,3].map(i=>make(i,seed+i*193));candidates.forEach((c,i)=>{let btn=document.createElement('button');btn.type='button';btn.className='cand';btn.setAttribute('aria-label',c.name+'を選択');let canvas=document.createElement('canvas');canvas.width=N;canvas.height=N;preview(canvas,c);let label=document.createElement('strong');label.textContent=c.name;let small=document.createElement('small');const met=metric(c.pixels);small.textContent=`外形左右差 ${met.sym}px`;btn.append(canvas,label,small);btn.onclick=()=>select(i);$('gallery').append(btn)});const index=recover?clamp(recover.choice,0,3):0;select(index,true);if(recover&&recover.dirty){work=new Uint8ClampedArray(recover.work);dirty=true;refresh();note('msg','手修正の作業データを復元しました。')}else if(recover){note('msg','描き込み改良版 v6.4 を生成しました。')}}
-function featuresDisplay(){const s=stats;$('sizeInfo').textContent=`${s.w}×${s.h}px`;$('ratioInfo').textContent=s.ratio.toFixed(2);$('colorsInfo').textContent=s.colors==null?'未解析':s.colors+'色';$('sourceInfo').textContent=s.source;$('lightInfo').textContent=Number.isFinite(s.lightShare)?Math.round(s.lightShare*100)+'%':'未解析';}
-function extract(image){const w=image.naturalWidth,h=image.naturalHeight;if(w>512||h>512||w<3||h<3)throw Error('画像サイズは3〜512pxにしてください');const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(image,0,0);const data=ctx.getImageData(0,0,w,h).data;let count=0,lightCount=0,minX=w,maxX=-1,minY=h,maxY=-1,byColor=new Map(),colSet=new Set();for(let y=0;y<h;y++)for(let x=0;x<w;x++){const j=(y*w+x)*4;if(data[j+3]<110)continue;count++;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);const color=[data[j],data[j+1],data[j+2]];const bright=(color[0]+color[1]+color[2])/3;const spread=Math.max(...color)-Math.min(...color);if(bright>=165&&spread<=85)lightCount++;colSet.add(color.join(','));const key=color.map(v=>Math.floor(v/16)*16+8).join(',');const a=byColor.get(key)||{n:0,r:0,g:0,b:0};a.n++;a.r+=color[0];a.g+=color[1];a.b+=color[2];byColor.set(key,a)}if(!count)throw Error('不透明なドットがありません');let sorted=[...byColor.values()].sort((a,b)=>b.n-a.n),color=sorted.map(x=>({n:x.n,rgb:[x.r/x.n,x.g/x.n,x.b/x.n],hsl:hsl([x.r/x.n,x.g/x.n,x.b/x.n])}));let candidate=color.filter(c=>c.hsl[1]>.23&&c.hsl[2]>.18&&c.hsl[2]<.8).sort((a,b)=>b.n-a.n)[0]||color[0];const [hue,sat]=candidate.hsl;return {w,h,ratio:(maxX-minX+1)/(maxY-minY+1),coverage:count/(w*h),lightShare:lightCount/count,colors:colSet.size,hue,sat:clamp(sat,.18,.8),source:'画素解析済み'};}
-async function loadPic(src,show=false){const im=new Image();if(!show)im.crossOrigin='anonymous';return new Promise((resolve,reject)=>{im.onload=()=>resolve(im);im.onerror=()=>reject(Error('画像を取得できません'));im.src=src})}
-$('analyze').onclick=async()=>{note('refStatus','原作の画像データを取得中…');try{let im=await loadPic(REF_URL);stats=extract(im);colorShift=0;featuresDisplay();seed+=71;paintCandidates();note('refStatus','画素解析しました。特徴が新しい4案に反映されました。')}catch(e){note('refStatus','外部サイトからの画素取得が制限されています。原寸PNGを保存し、下の画像選択欄から取り込んでください。',true)}};
-$('refUpload').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;const url=URL.createObjectURL(f);try{if(f.size>5000000)throw Error('5MB以下の画像にしてください');const image=await loadPic(url,true);const v=extract(image);if(v.w>128||v.h>128)note('refStatus','大きな画像です。原作の原寸16×18pxを使うと正確に分析できます。',true);else note('refStatus','画像の画素特徴を抽出しました。生成に反映しました。');stats=v;colorShift=0;$('refImage').src=url;featuresDisplay();seed+=71;paintCandidates()}catch(err){note('refStatus','解析できません: '+err.message,true)}finally{e.target.value=''; /* retain object URL while preview uses it */}};
-$('resetReference').onclick=()=>{stats={...BASE};colorShift=0;$('refImage').src=REF_URL;featuresDisplay();seed+=71;paintCandidates();note('refStatus','マムルの資料寸法を使用しています（色数は未解析）。')};
-$('generate').onclick=()=>{if(dirty&&!confirm('手修正中の絵を破棄して再生成しますか？'))return;seed+=149;paintCandidates()};
-$('recolor').onclick=()=>{if(dirty&&!confirm('手修正中の絵を破棄して色を再生成しますか？'))return;colorShift=(colorShift+43)%360;paintCandidates();note('msg','原作の分析値は維持して、独自パレットだけ色相を変更しました。')};
-$('silhouette').onchange=()=>candidates.forEach((s,i)=>{const c=$('gallery').children[i]?.querySelector('canvas');if(c)preview(c,s)});
-let strokes=[];function history(){undo.push(work.slice());if(undo.length>30)undo.shift();redo=[];dirty=true}
-function drawPixel(x,y,erase){if(x<0||x>=N||y<0||y>=N)return;const i=(y*N+x)*4;work.set(erase?[0,0,0,0]:[...rgb(brush),255],i)}
-function coord(e){const b=editor.getBoundingClientRect();return{x:clamp(Math.floor((e.clientX-b.left)/b.width*N),0,N-1),y:clamp(Math.floor((e.clientY-b.top)/b.height*N),0,N-1)}}
-function line(a,b){let x=a.x,y=a.y,dx=Math.abs(b.x-x),dy=-Math.abs(b.y-y),sx=x<b.x?1:-1,sy=y<b.y?1:-1,err=dx+dy;while(true){drawPixel(x,y,currentTool==='eraser');if(x===b.x&&y===b.y)break;const n=2*err;if(n>=dy){err+=dy;x+=sx}if(n<=dx){err+=dx;y+=sy}}}
-function fill(x,y){const k=y*N+x,old=Array.from(work.slice(k*4,k*4+4)),next=[...rgb(brush),255];if(old.every((v,i)=>v===next[i]))return;history();const done=new Uint8Array(N*N),stack=[k];while(stack.length){const j=stack.pop();if(done[j])continue;done[j]=1;const p=j*4;if(!old.every((v,i)=>work[p+i]===v))continue;work.set(next,p);const x=j%N,y=(j-x)/N;for(const z of [x?j-1:-1,x<23?j+1:-1,y?j-24:-1,y<23?j+24:-1])if(z>=0&&!done[z])stack.push(z)}refresh()}
-editor.addEventListener('pointerdown',e=>{if(!e.isPrimary)return;e.preventDefault();const p=coord(e);if(currentTool==='picker'){const i=(p.y*N+p.x)*4;if(work[i+3]>128){setBrush(hex([work[i],work[i+1],work[i+2]]));setTool('pen')}return}if(currentTool==='fill'){fill(p.x,p.y);return}drawing=true;history();previous=p;line(p,p);refresh();try{editor.setPointerCapture(e.pointerId)}catch{}});
-editor.addEventListener('pointermove',e=>{if(!drawing||!e.isPrimary)return;e.preventDefault();const p=coord(e);line(previous,p);previous=p;refresh()});for(const ev of ['pointerup','pointercancel','lostpointercapture'])editor.addEventListener(ev,()=>{drawing=false;previous=null});
-function setTool(tool){currentTool=tool;for(const id of ['pen','eraser','fill','picker'])$(id).classList.toggle('active',id===tool)}for(const id of ['pen','eraser','fill','picker'])$(id).onclick=()=>setTool(id);
-$('color').oninput=e=>setBrush(e.target.value);$('undo').onclick=()=>{if(!undo.length)return;redo.push(work.slice());work=undo.pop();dirty=true;refresh()};$('redo').onclick=()=>{if(!redo.length)return;undo.push(work.slice());work=redo.pop();dirty=true;refresh()};$('grid').onclick=()=>{const on=$('editorFrame').classList.toggle('grid');$('grid').textContent=on?'格子 OFF':'格子 ON'};
-function download(name,blob){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),12000)}
-$('savePNG').onclick=()=>editor.toBlob(b=>{if(b){download('original_small_beast_24x24.png',b);note('msg','透過PNGを書き出しました')}else note('msg','PNG保存に失敗しました',true)},'image/png');
-$('saveJSON').onclick=()=>download('original_small_beast_v6.json',new Blob([JSON.stringify(snapshot())],{type:'application/json'}));
-$('openJSON').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>35000)throw Error('ファイルが大きすぎます');const saved=JSON.parse(await file.text());if(![5,6].includes(saved.version)||!Array.isArray(saved.work)||saved.work.length!==N*N*4||saved.work.some(v=>!Number.isInteger(v)||v<0||v>255))throw Error('v6の編集データではありません');if(dirty&&!confirm('今の手修正を読み込んだ内容で上書きしますか？'))return;stats={...BASE,...saved.stats};colorShift=(saved.colorShift||0)%360;featuresDisplay();seed=saved.seed|0;paintCandidates(saved);note('msg','編集データを読み込みました')}catch(err){note('msg','読込失敗: '+err.message,true)}finally{e.target.value=''}};
-featuresDisplay();let saved=null;try{const raw=localStorage.getItem(SAVE_KEY)||localStorage.getItem('mamel_blueprint_v5');saved=JSON.parse(raw||'null');if(![5,6].includes(saved?.version)||!Array.isArray(saved.work)||saved.work.length!==N*N*4)saved=null;if(saved){stats={...BASE,...saved.stats};colorShift=(saved.colorShift||0)%360;seed=saved.seed;featuresDisplay()}}catch{saved=null}
-paintCandidates(saved);
+
+
+const $=id=>document.getElementById(id);
+const SAVE_KEY='mamel_blueprint_v65';
+const editor=$('editor'),ctx=editor.getContext('2d',{willReadFrequently:true});
+let seed=19731,choice=0,candidates=[],work=new Uint8ClampedArray(24*24*4),palette=[],brush='#82c3c7',tool='pen',dirty=false,undo=[],redo=[],drawing=false,lastPixel=-1;
+function drawTo(canvas,pixels){canvas.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(pixels),24,24),0,0)}
+function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({version:65,seed,colorShift,choice,dirty,work:Array.from(work),stats}))}catch(_){}}
+function statsText(){
+ const e=Number.isFinite(stats.earShare)?Math.round(stats.earShare*100)+'%':'-';
+ const f=Number.isFinite(stats.faceDarkShare)?Math.round(stats.faceDarkShare*100)+'%':'-';
+ const b=Number.isFinite(stats.bellyLightShare)?Math.round(stats.bellyLightShare*100)+'%':'-';
+ return `比率${stats.ratio.toFixed(2)} / 耳帯${e} / 顔暗色${f} / 腹明色${b}`;
+}
+function setStatus(t){$('status').textContent=t}
+function setBrush(c){brush=c.toUpperCase();$('color').value=brush;renderPalette()}
+function renderPalette(){const el=$('palette');el.replaceChildren();for(const c of palette){const b=document.createElement('button');b.className='swatch'+(brush.toUpperCase()===c.toUpperCase()?' active':'');b.style.background=c;b.title=c;b.setAttribute('aria-label','色'+c);b.onclick=()=>setBrush(c);el.appendChild(b)}}
+function refresh(){drawTo(editor,work);let count=0,colors=new Set(),sym=0;for(let y=0;y<24;y++)for(let x=0;x<24;x++){let i=(y*24+x)*4;if(work[i+3]){count++;colors.add([...work.slice(i,i+3)].join(','));}if(x<12&&((work[i+3]>0)!==(work[(y*24+23-x)*4+3]>0)))sym++}
+ $('metrics').textContent=`24×24px　${colors.size}色　描画${count}px　輪郭左右差${sym}px\n${statsText()}`; $('undo').disabled=undo.length===0;$('redo').disabled=redo.length===0; saveState()}
+function select(index,force=false){if(dirty&&!force&&!confirm('手修正を破棄して候補を切り替えますか？'))return;choice=index;work=candidates[index].pixels.slice();palette=candidates[index].palette;dirty=false;undo=[];redo=[];setBrush(palette[2]);refresh();[...$('gallery').children].forEach((e,i)=>e.classList.toggle('active',i===index));setStatus(LABELS[index]+'を選択')}
+function generate(recover=null){candidates=[0,1,2,3].map(i=>make(i,seed+i*193));$('gallery').replaceChildren();for(let i=0;i<4;i++){const e=document.createElement('button');e.type='button';e.className='cand';e.setAttribute('aria-label',LABELS[i]+'を選択');const c=document.createElement('canvas');c.width=24;c.height=24;drawTo(c,candidates[i].pixels);const span=document.createElement('strong');span.textContent=LABELS[i];e.append(c,span);e.onclick=()=>select(i);$('gallery').appendChild(e)}select(recover?Math.max(0,Math.min(3,recover.choice)):0,true);if(recover&&recover.dirty&&Array.isArray(recover.work)&&recover.work.length===2304){work=new Uint8ClampedArray(recover.work);dirty=true;refresh();setStatus('前回の手修正を復元しました')}else setStatus('4案すべて生成しました。タップすると編集できます。')}
+function checkpoint(){undo.push(work.slice());if(undo.length>30)undo.shift();redo=[]}
+function getPoint(event){const r=editor.getBoundingClientRect();return {x:Math.floor((event.clientX-r.left)*24/r.width),y:Math.floor((event.clientY-r.top)*24/r.height)}}
+function pixelKey(p){return (p.y*24+p.x)*4}
+function fillAt(x,y,color){const idx=(y*24+x)*4, before=Array.from(work.slice(idx,idx+4)); const target=color? [...color,255]:[0,0,0,0];if(before.every((n,i)=>n===target[i]))return;const stack=[[x,y]];const seen=new Uint8Array(576);while(stack.length){const [cx,cy]=stack.pop();if(cx<0||cy<0||cx>=24||cy>=24)continue;const v=cy*24+cx;if(seen[v])continue;seen[v]=1;const k=v*4;if(!before.every((n,i)=>work[k+i]===n))continue;work.set(target,k);stack.push([cx-1,cy],[cx+1,cy],[cx,cy-1],[cx,cy+1])}}
+function applyPoint(p){if(p.x<0||p.x>=24||p.y<0||p.y>=24)return;const k=pixelKey(p);if(k===lastPixel)return;lastPixel=k;if(tool==='picker'){if(work[k+3]){const c='#'+[...work.slice(k,k+3)].map(n=>n.toString(16).padStart(2,'0')).join('');setBrush(c)}return;}if(tool==='fill'){fillAt(p.x,p.y,tool==='eraser'?null:[1,3,5].map(n=>parseInt(brush.slice(n,n+2),16)));drawing=false;dirty=true;refresh();return}
+if(tool==='eraser'){work.fill(0,k,k+4)}else{work.set([1,3,5].map(n=>parseInt(brush.slice(n,n+2),16)).concat(255),k)}dirty=true;refresh()}
+editor.onpointerdown=e=>{e.preventDefault();if(tool!=='picker'){checkpoint()}drawing=true;lastPixel=-1;editor.setPointerCapture(e.pointerId);applyPoint(getPoint(e))};
+editor.onpointermove=e=>{if(drawing&&(tool==='pen'||tool==='eraser')){e.preventDefault();applyPoint(getPoint(e))}};
+editor.onpointerup=()=>{drawing=false;lastPixel=-1};editor.onpointercancel=()=>{drawing=false;lastPixel=-1};
+for(const b of document.querySelectorAll('[data-tool]'))b.onclick=()=>{tool=b.dataset.tool;for(const x of document.querySelectorAll('[data-tool]'))x.classList.toggle('active',x===b)};
+$('color').oninput=e=>setBrush(e.target.value);
+$('undo').onclick=()=>{if(undo.length){redo.push(work.slice());work=undo.pop();dirty=true;refresh()}};
+$('redo').onclick=()=>{if(redo.length){undo.push(work.slice());work=redo.pop();dirty=true;refresh()}};
+$('grid').onclick=()=>{$('editorFrame').classList.toggle('grid');$('grid').textContent=$('editorFrame').classList.contains('grid')?'格子 OFF':'格子 ON'};
+$('regenerate').onclick=()=>{if(dirty&&!confirm('手修正を破棄して再生成しますか？'))return;seed+=197;generate()};
+$('recolor').onclick=()=>{if(dirty&&!confirm('手修正を破棄して色を変えますか？'))return;colorShift=(colorShift+17)%360;generate()};
+function download(blob,name){const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000)}
+$('savePng').onclick=()=>{const c=document.createElement('canvas');c.width=24;c.height=24;drawTo(c,work);c.toBlob(blob=>{if(blob)download(blob,'dot_art_v65_'+LABELS[choice]+'.png')},'image/png')};
+$('saveJson').onclick=()=>download(new Blob([JSON.stringify({version:65,seed,choice,dirty:true,work:Array.from(work),stats,colorShift})],{type:'application/json'}),'dot_art_v65.json');
+$('loadJson').onclick=()=>$('jsonFile').click();
+$('jsonFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const d=JSON.parse(await file.text());if(!Array.isArray(d.work)||d.work.length!==2304||![5,6,64,65].includes(d.version))throw Error('対応していないJSON');if(dirty&&!confirm('現在の作業を上書きしますか？'))return;seed=Number.isFinite(d.seed)?d.seed:19731;stats=d.stats&&Number.isFinite(d.stats.ratio)?{...stats,...d.stats}:stats;colorShift=Number.isFinite(d.colorShift)?d.colorShift:0;generate({...d,dirty:true});setStatus('JSON読込完了')}catch(err){alert('JSON読込失敗: '+err.message)}finally{e.target.value=''}};
+function extractBands(im){
+ const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(im,0,0);const data=cx.getImageData(0,0,c.width,c.height).data;
+ let xx0=c.width,xx1=-1,yy0=c.height,yy1=-1,ct=0,r=0,g=0,b=0;
+ for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++){const i=(y*c.width+x)*4;if(data[i+3]<128)continue;ct++;xx0=Math.min(xx0,x);xx1=Math.max(xx1,x);yy0=Math.min(yy0,y);yy1=Math.max(yy1,y);r+=data[i];g+=data[i+1];b+=data[i+2]}
+ if(!ct) throw Error('不透明な画素がありません');
+ let earBand=0,earPix=0,faceBand=0,faceDark=0,bellyBand=0,bellyLight=0;
+ const bw=Math.max(1,xx1-xx0), bh=Math.max(1,yy1-yy0);
+ for(let y=yy0;y<=yy1;y++)for(let x=xx0;x<=xx1;x++){
+   const i=(y*c.width+x)*4;if(data[i+3]<128)continue;
+   const nx=(x-xx0)/bw, ny=(y-yy0)/bh; const rr=data[i],gg=data[i+1],bb=data[i+2]; const avg=(rr+gg+bb)/3, spread=Math.max(rr,gg,bb)-Math.min(rr,gg,bb);
+   if(ny<=0.34 && (nx<=0.30 || nx>=0.70)){ earBand++; earPix++; }
+   if(ny>=0.32 && ny<=0.68 && nx>=0.18 && nx<=0.82){ faceBand++; if(avg<=110 || (avg<=128 && spread<=70)) faceDark++; }
+   if(ny>=0.58 && ny<=0.95 && nx>=0.18 && nx<=0.82){ bellyBand++; if(avg>=165 && spread<=85) bellyLight++; }
+ }
+ const R=r/ct,G=g/ct,B=b/ct,mx=Math.max(R,G,B),mn=Math.min(R,G,B),delta=mx-mn; let H=191;
+ if(delta){if(mx===R)H=((G-B)/delta)%6;else if(mx===G)H=(B-R)/delta+2;else H=(R-G)/delta+4;H=(H*60+360)%360}
+ const L=(mx+mn)/510,S=delta===0?0:(delta/255)/(1-Math.abs(2*L-1));
+ return {
+   ratio:(xx1-xx0+1)/(yy1-yy0+1), coverage:ct/(c.width*c.height), hue:H, sat:clamp(S,.18,.8),
+   earShare:earBand?earPix/ct:null,
+   faceDarkShare:faceBand?faceDark/faceBand:null,
+   bellyLightShare:bellyBand?bellyLight/bellyBand:null,
+   width:c.width,height:c.height
+ };
+}
+// Original is linked from its source, not included in the game's generated assets.
+const originalEl=$('referenceOriginal'),missingEl=$('referenceUnavailable');
+let originalObjectURL=null;
+originalEl.addEventListener('error',()=>{if(!originalObjectURL){originalEl.hidden=true;missingEl.hidden=false;}});
+originalEl.addEventListener('load',()=>{originalEl.hidden=false;missingEl.hidden=true;});
+if(originalEl.complete && originalEl.naturalWidth>0){originalEl.hidden=false;missingEl.hidden=true;} 
+$('referenceFile').onchange=async e=>{
+ const f=e.target.files?.[0];if(!f)return;
+ const url=URL.createObjectURL(f);
+ try{
+  if(f.size>5000000)throw Error('ファイルは5MB以内にしてください');
+  const im=new Image();
+  await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=()=>reject(Error('画像を開けません'));im.src=url});
+  if(im.naturalWidth>512||im.naturalHeight>512||im.naturalWidth<3||im.naturalHeight<3)throw Error('原寸の3〜512px画像が必要です');
+  if(dirty&&!confirm('手修正を残す場合はキャンセルしてください。参照解析の結果で4案を再生成しますか？'))return;
+  const ex=extractBands(im); // Validate before swapping the displayed reference.
+  if(originalObjectURL)URL.revokeObjectURL(originalObjectURL);
+  originalObjectURL=url;
+  originalEl.hidden=false;missingEl.hidden=true;originalEl.src=url;
+  stats={...stats,...ex};seed+=23;generate();
+  $('referenceText').textContent=`解析完了: ${ex.width}×${ex.height}px / 耳帯${Math.round((ex.earShare||0)*100)}% / 顔暗色${Math.round((ex.faceDarkShare||0)*100)}% / 腹明色${Math.round((ex.bellyLightShare||0)*100)}%`;
+ }catch(err){$('referenceText').textContent='画像解析失敗: '+err.message;}
+ finally{if(originalObjectURL!==url)URL.revokeObjectURL(url);e.target.value='';}
+};
+try{const d=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(d&&d.version===65&&d.stats&&d.work&&d.work.length===2304){seed=d.seed;stats={...stats,...d.stats};colorShift=d.colorShift||0;generate(d)}else generate()}catch(_){generate()}
+
 </script></body></html>
