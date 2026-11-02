@@ -92,3 +92,14 @@
 - コード改修：`shiren_sfc_reference_viewer.html` を同じmainブランチ上書き。最新コミット `a349e78a07400fc31bdcf258bd2efd2b8b196c9f`。確認URL：<https://ninjin-man.github.io/shiren-extended/shiren_sfc_reference_viewer.html?v=64>。
 - 検証：ローカル描画ロジックで540条件（左右全色・透明度、輪郭不変、片目黒目1px、色数、lightShare変化）。独立プレビューHTMLは Chromium 320/390/430pxで4画像ロード・横はみ出しなし・pageerrorなし。**GitHub Pages本体／iPhone Safari実機での自動動作確認は未実施**。
 - 次は参照原寸PNGから色面割合のより堅牢な抽出や、耳・顔・腹のパーツマスクの解析を検討する。すでに合格に近づいた目と輪郭は無断で大幅に変えない。
+
+## 11. v6.6 原画部位別候補推定（2026-11-02）
+- ユーザー選択A：原画解析を最優先。v6.5.2の原画・4案比較を公開版へ反映したコミット `563be5e77e0d19bedc492d691c5283bf8514133d`。
+- さらに公開HTML `shiren_sfc_reference_viewer.html` をv6.6へ更新。コミット `5a1b050969f056a36188bbfc54b5fc16e22202d1`。URL: <https://ninjin-man.github.io/shiren-extended/shiren_sfc_reference_viewer.html?v=66>。index.htmlは変更なし。
+- v6.5.2で復活させた原画欄、4候補（JavaScript無効時の静的プレビューも）、24×24編集、PNG/JSON保存を維持。
+- 原寸PNGを「原画PNGを選択」で読み込むと、透明画素を除いた領域を基準に耳・目（左右）・鼻口・腹の色と位置を自動**推定**。 `estimateParts()` は色・相対座標による候補抽出で、確定した意味的部位認識ではない。
+- `renderPartAnalysis()` が各部位の推定画素と矩形を原画に重ねて可視化、画素面積、推定幅・高さ、左上座標、代表色を表示。
+- 生成 `make()` に、耳・鼻口・腹の候補サイズを控えめに反映（最大±1px）。v6.4で好評だった目の形・片目黒目1px・左右対称性は維持。
+- 保存キー `mamel_blueprint_v65` を継続しv6.5.2の手修正データを引き継ぐ。参照元の画素配列は保存せず、解析した要約だけを保存。原画自体はファイル・公開アセットに同梱せず、外部参照または端末PNG読込。
+- 検証: Chromium 320/390/430px、4案表示、部位4件の解析、原画アップロード、PNG/JSON、JS無効の静的候補4件、左右色対称、黒目各1pxで合格。試験画像はオリジナルの16×18素材。**SFCマムル実画像での自動領域検出精度およびiPhone Safari実機は未検証**。ローカルURLへのアクセス制限によりブラウザのページ再読込テストは未完。
+- 次段階: 実際のSFC原寸PNGで推定範囲を確認し、誤分類部分を手動調整できる矩形/マスクUIを追加。現状の輪郭や目は、ユーザーの評価がないまま大幅に変えない。
