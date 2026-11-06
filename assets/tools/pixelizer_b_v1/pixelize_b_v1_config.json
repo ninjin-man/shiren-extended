@@ -1,0 +1,79 @@
+{
+  "padding": 1,
+  "coverage_threshold": 0.36,
+  "weak_threshold": 0.17,
+  "features": [
+    {
+      "name": "left_eye_socket",
+      "box": [
+        0.28,
+        0.195,
+        0.5,
+        0.33
+      ],
+      "kind": "dark",
+      "target_rgb": [
+        26,
+        55,
+        17
+      ],
+      "lab_distance": 50,
+      "min_pixels": 3,
+      "max_pixels": 9
+    },
+    {
+      "name": "right_eye_socket",
+      "box": [
+        0.5,
+        0.195,
+        0.75,
+        0.33
+      ],
+      "kind": "dark",
+      "target_rgb": [
+        26,
+        55,
+        17
+      ],
+      "lab_distance": 50,
+      "min_pixels": 3,
+      "max_pixels": 9
+    },
+    {
+      "name": "left_angry_eye",
+      "box": [
+        0.3,
+        0.215,
+        0.5,
+        0.33
+      ],
+      "kind": "warm-yellow",
+      "target_rgb": [
+        248,
+        213,
+        43
+      ],
+      "lab_distance": 65,
+      "min_pixels": 2,
+      "max_pixels": 3
+    },
+    {
+      "name": "right_angry_eye",
+      "box": [
+        0.51,
+        0.215,
+        0.72,
+        0.33
+      ],
+      "kind": "warm-yellow",
+      "target_rgb": [
+        248,
+        213,
+        43
+      ],
+      "lab_distance": 65,
+      "min_pixels": 2,
+      "max_pixels": 3
+    }
+  ]
+}
