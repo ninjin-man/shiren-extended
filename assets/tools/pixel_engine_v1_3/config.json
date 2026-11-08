@@ -1,0 +1,21 @@
+{
+  "background": "auto",
+  "min_master_side": 68,
+  "max_master_side": 128,
+  "max_game_side": 64,
+  "detail_game_side": 80,
+  "master_colors": 30,
+  "game_colors": 24,
+  "alpha_threshold": 0.47,
+  "padding": 1,
+  "max_source_side": 1600,
+  "ink_local_contrast": 14.0,
+  "ink_luminance_ceiling": 170,
+  "ink_area_threshold": 0.32,
+  "spatial_strength": 2.8,
+  "source_denoise": 30,
+  "min_region_pixels": 2,
+  "game_spatial_strength": 2.6,
+  "game_source_denoise": 18,
+  "game_min_region_pixels": 1
+}
